@@ -17,13 +17,13 @@
 
 - 用户需求：做假人木桩测试交互和伤害；玩家可以有近战道具或枪械。已确认：武器在地上捡（E 拾取、可丢弃）；玩家有血量，打空倒地后复活；第一版武器为棒球棍、平底锅、手枪（即时命中）、水枪（实体水弹）。
 - 已完成：
-  - 伤害系统 Assets/Game/Scripts/Combat：Health（服务器扣血、NetworkVariable 同步、受击 Rpc 广播、死亡事件）、DamageInfo/IKnockbackReceiver、DamagePopup（伤害飘字）、TrainingDummy（不死、停手 3 秒回满、受击摇晃、头顶显示 HP/上次伤害/DPS）。推人也改为走 Health（推 0 伤害，冲刺扑倒 5 伤害）。
-  - 武器 Assets/Game/Scripts/Weapons：WeaponDefinition（ScriptableObject 参数）、WeaponDatabase（Resources/WeaponDatabase，网络只同步下标）、WeaponPickup（地上武器，丢下的 30 秒后消失）、WeaponSpawnPoint、PlayerWeapons（拾取/丢弃/换弹/攻击，服务器判定）、Projectile（服务器那颗结算，其他端表现）、CombatFx（弹道线、命中碎块）。
+  - 伤害系统 Assets/Scripts/Combat：Health（服务器扣血、NetworkVariable 同步、受击 Rpc 广播、死亡事件）、DamageInfo/IKnockbackReceiver、DamagePopup（伤害飘字）、TrainingDummy（不死、停手 3 秒回满、受击摇晃、头顶显示 HP/上次伤害/DPS）。推人也改为走 Health（推 0 伤害，冲刺扑倒 5 伤害）。
+  - 武器 Assets/Scripts/Weapons：WeaponDefinition（ScriptableObject 参数）、WeaponDatabase（Resources/WeaponDatabase，网络只同步下标）、WeaponPickup（地上武器，丢下的 30 秒后消失）、WeaponSpawnPoint、PlayerWeapons（拾取/丢弃/换弹/攻击，服务器判定）、Projectile（服务器那颗结算，其他端表现）、CombatFx（弹道线、命中碎块）。
   - 玩家：PlayerLife（死亡丢武器，3 秒后满血复活回出生点）、PlayerHud（准星、命中标记、血条、武器子弹、拾取提示、受伤闪红、死亡倒计时）。
   - 场景：训练区在场地 +X 侧（3 个木桩），武器架在出生圈内 z=-2.6（从左到右：棒球棍、平底锅、手枪、水枪），被捡走 8 秒后刷新。ServerSpawner 在服务器启动时生成木桩与武器。
   - 输入：InputSystem_Actions 新增 Drop（G / 手柄十字键下）、Reload（R / 手柄右肩键），Interact 去掉 Hold。
   - 自测：DevTools/CombatSelfTest，主机带 -combatTest 启动时自动跑战斗测试。
-- 武器参数（Assets/Game/Weapons/*.asset 可调）：棒球棍 25 伤/0.55s；平底锅 15 伤并扑倒/0.75s；手枪 15 伤/0.25s/8 发/换弹 1.2s；水枪 8 伤/0.15s 连发/24 发/换弹 1.5s。
+- 武器参数（Assets/Data/Weapons/*.asset 可调）：棒球棍 25 伤/0.55s；平底锅 15 伤并扑倒/0.75s；手枪 15 伤/0.25s/8 发/换弹 1.2s；水枪 8 伤/0.15s 连发/24 发/换弹 1.5s。
 - 验证（实际执行）：batchmode 编译无错误无警告；生成器成功，3 个网络 prefab 哈希非 0 且已登记；Windows 构建成功；无窗口主机(-combatTest)+1 客户端：四把武器各打木桩 3 次均造成伤害（75/45/45/24），地上拾取成功，手枪 7 发打倒客户端玩家、3 秒后满血复活，客户端收到全部 19 次受击广播与死亡/复活状态，ALL PASSED。
 - 未验证：有画面的手感（挥动/后坐动画、弹道、飘字、HUD 中文、木桩文字）、真人键鼠输入下的拾取/丢弃/换弹、两台电脑局域网。
 - 已知限制：命中判定在服务器用同步后的位置（局域网延迟小可接受，无延迟补偿）；第一人称武器模型直接挂在相机前，可能穿进墙里；没有音效与角色动画。
@@ -33,8 +33,8 @@
 - 用户需求：3D lowpoly 多人联机派对游戏，先搭底子。已确认：局域网联机（一人当主机，其他人填 IP 加入）、第一人称视角、移动+跳跃、冲刺、推/扑倒其他玩家。验收条件未单独给出。
 - 已完成：
   - 依赖：Netcode for GameObjects 2.13.3（带入 Unity Transport 2.6.0）。
-  - 脚本 Assets/Game/Scripts：Player/PlayerController（第一人称移动/跳跃/冲刺/视角、击退、被扑倒状态）、Player/PlayerPush（左键推人，冲刺中左键扑倒，服务器校验）、Player/PlayerVisuals（按玩家编号上色、隐藏自己身体、倒地表现）、Network/LanSession（创建主机/按 IP 加入、连接审批与出生点、IMGUI 菜单、命令行参数）、Core/InputGate、CameraHome、SpawnPoints。
-  - 生成器 Assets/Game/Editor/PlaygroundBuilder.cs：菜单「SCP/重新生成 Playground 场景与玩家 Prefab」生成 Materials、Prefabs/Player.prefab、Scenes/Playground.unity，并把 Playground 设为首个构建场景（SampleScene 保留但禁用）；菜单「SCP/构建 Windows 测试包」输出 Builds/Windows/SCP.exe。
+  - 脚本 Assets/Scripts：Player/PlayerController（第一人称移动/跳跃/冲刺/视角、击退、被扑倒状态）、Player/PlayerPush（左键推人，冲刺中左键扑倒，服务器校验）、Player/PlayerVisuals（按玩家编号上色、隐藏自己身体、倒地表现）、Network/LanSession（创建主机/按 IP 加入、连接审批与出生点、IMGUI 菜单、命令行参数）、Core/InputGate、CameraHome、SpawnPoints。
+  - 生成器 Assets/Editor/PlaygroundBuilder.cs：菜单「SCP/重新生成 Playground 场景与玩家 Prefab」生成 Materials、Prefabs/Player.prefab、Scenes/Playground.unity，并把 Playground 设为唯一构建场景；菜单「SCP/构建 Windows 测试包」输出 Builds/Windows/SCP.exe。
   - Assets/DefaultNetworkPrefabs.asset 为 Netcode 自动生成。
 - 操作：WASD/左摇杆移动，鼠标/右摇杆视角，空格/A 跳，左 Shift/按下左摇杆冲刺，左键/手柄 X 推人，冲刺中推=扑倒（对方倒地 1.6 秒）；Esc 释放鼠标，点击画面恢复；掉出平台自动回出生点。最多 8 人，端口默认 7777。
 - 验证（实际执行）：
@@ -44,7 +44,7 @@
 - 未验证：推人/扑倒、跳跃冲刺手感、第一人称相机、IMGUI 菜单中文显示均未在有画面、有真人输入的情况下测试；未在两台真实电脑的局域网中测试（Windows 防火墙首次会弹窗，需允许）；没有自动化测试。
 - 已知限制：移动为拥有者权威（客户端可作弊，派对游戏暂可接受）；菜单是临时 IMGUI；没有局域网自动发现、角色动画、音效、玩法规则。
 - 未提交：ProjectSettings/UnityConnectSettings.asset 的 m_Enabled 0→1，来源不明（非本任务需要），保留在工作区由用户决定。
-- 下一步：用户在编辑器打开 Assets/Game/Scenes/Playground.unity，用 Builds/Windows/SCP.exe 或 Multiplayer Play Mode 开两个实例实测手感；确认首个派对玩法与验收条件。
+- 下一步：用户在编辑器打开 Assets/Scenes/Playground.unity，用 Builds/Windows/SCP.exe 或 Multiplayer Play Mode 开两个实例实测手感；确认首个派对玩法与验收条件。
 
 ## 后续每次任务更新格式
 
@@ -65,3 +65,4 @@
 - 2026-10-28 / Claude / main：搭建局域网联机底子（Netcode for GameObjects 2.13.3、第一人称角色、推人/扑倒、Playground 场景与生成器），详见“联机底子”。
 - 2026-10-28 / Claude / main：PlayerSettings 开启 Run In Background（联机时失焦窗口不能暂停，否则主机停止同步），已重新构建 Windows 包。
 - 2026-10-28 / Claude / main：新增训练木桩、血量/死亡复活、四把可拾取武器与 HUD、自动化战斗自测，详见“木桩与武器”。
+- 2026-10-28 / Claude / main：Assets 扁平化（去掉 Assets/Game 一层），删除模板 Readme、TutorialInfo、SampleScene；生成器路径同步更新。验证：batchmode 导入与 Windows 构建成功，主机+客户端 -combatTest ALL PASSED，生成器在新路径运行成功（场景重生成的 ID 变动已丢弃，保留移动后的原场景）。

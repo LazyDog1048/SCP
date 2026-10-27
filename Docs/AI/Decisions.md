@@ -35,7 +35,14 @@
 - 已确认需求：地上捡武器（同时只拿一把，空手左键=推人）；玩家 100 血，归零倒地 3 秒后复活；第一版 4 把武器（棒球棍、平底锅、手枪、水枪）。
 - 伤害由服务器结算（Health 只允许服务器写），木桩、玩家、推人共用 Health；击退通过 IKnockbackReceiver 转给玩家拥有者执行（因为移动是拥有者权威）。
 - 命中判定在服务器：近战为头部前方扇形范围，手枪为服务器射线，水弹由服务器模拟一颗不联网的子弹结算伤害，其他端只模拟表现。没有延迟补偿，局域网可接受。
-- 武器参数放 ScriptableObject（Assets/Game/Weapons），武器表放 Resources/WeaponDatabase；网络只同步下标，所以调整武器表顺序后联机各方必须用同一版本。
+- 武器参数放 ScriptableObject（Assets/Data/Weapons），武器表放 Resources/WeaponDatabase；网络只同步下标，所以调整武器表顺序后联机各方必须用同一版本。
 - 武器、木桩、拾取物的 prefab 也由 PlaygroundBuilder 生成；手调参数请改 Weapons/*.asset（生成器会覆盖数值），或者同步改生成器。
 - 输入：Interact 去掉模板自带的 Hold 交互（拾取需要按下即触发），新增 Drop、Reload 动作。
 - 自动化自测 CombatSelfTest 只在 -combatTest 参数下运行，正式游戏不受影响。
+
+## 2026-10-28：Assets 目录扁平化
+
+- 已确认需求：用户不希望多一层 Assets/Game，并要求删除 Unity 模板自带的无用内容。
+- 做法：Assets/Game 下的 Scripts、Editor、Prefabs、Materials、Resources、Scenes 移到 Assets 根目录，武器参数放 Assets/Data/Weapons；删除 Readme.asset、TutorialInfo/、Scenes/SampleScene.unity 及其构建项。移动时保留 .meta，GUID 不变。
+- 保留：Settings/ 全部（URP 管线、渲染器、手机画质档、全局设置、后处理配置 SampleSceneProfile 均被引用）、InputSystem_Actions、DefaultNetworkPrefabs。
+- 约定：以后导入的第三方插件保持其自带文件夹，不要混进 Scripts/Prefabs 等自有目录。

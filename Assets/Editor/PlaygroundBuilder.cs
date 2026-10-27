@@ -23,11 +23,10 @@ namespace ScpParty.EditorTools
     /// </summary>
     public static partial class PlaygroundBuilder
     {
-        const string Root = "Assets/Game";
+        const string Root = "Assets";
         const string MaterialDir = Root + "/Materials";
         const string PrefabPath = Root + "/Prefabs/Player.prefab";
         const string ScenePath = Root + "/Scenes/Playground.unity";
-        const string SampleScenePath = "Assets/Scenes/SampleScene.unity";
         const string WindowsBuildPath = "Builds/Windows/SCP.exe";
 
         static readonly Color SkyColor = new(0.62f, 0.80f, 0.95f);
@@ -316,11 +315,7 @@ namespace ScpParty.EditorTools
 
         static void SetBuildScenes()
         {
-            EditorBuildSettings.scenes = new[]
-            {
-                new EditorBuildSettingsScene(ScenePath, true),
-                new EditorBuildSettingsScene(SampleScenePath, false),
-            };
+            EditorBuildSettings.scenes = new[] { new EditorBuildSettingsScene(ScenePath, true) };
         }
     }
 }

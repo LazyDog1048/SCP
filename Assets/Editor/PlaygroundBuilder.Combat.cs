@@ -10,7 +10,7 @@ namespace ScpParty.EditorTools
     public static partial class PlaygroundBuilder
     {
         const string WeaponModelDir = Root + "/Prefabs/Weapons";
-        const string WeaponDataDir = Root + "/Weapons";
+        const string WeaponDataDir = Root + "/Data/Weapons";
         const string ResourcesDir = Root + "/Resources";
         const string PickupPrefabPath = Root + "/Prefabs/WeaponPickup.prefab";
         const string DummyPrefabPath = Root + "/Prefabs/TrainingDummy.prefab";

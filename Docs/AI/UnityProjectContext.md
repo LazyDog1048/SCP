@@ -12,11 +12,11 @@
 
 ## 目录、程序集及启动
 
-- Assets/Game/Scenes/Playground.unity：首个启用的构建场景（联机测试场地）。Assets/Scenes/SampleScene.unity 保留但在构建中禁用。
+- Assets/Scenes/Playground.unity：唯一的构建场景（联机测试场地）。Unity 模板的 SampleScene、Readme、TutorialInfo 已于 2026-10-28 删除。
 - Assets/Settings：渲染管线/模板设置。
 - Assets/TutorialInfo：模板说明；仅发现 Readme.cs（ScriptableObject）和 Editor/ReadmeEditor.cs（编辑器脚本）。
-- 自有代码在 Assets/Game（命名空间 ScpParty），未使用 asmdef，编译进默认程序集；Assets/Game/Editor 为编辑器脚本。没有自动化测试。
-- 场景、玩家/木桩/拾取物 prefab、武器数据与模型由 Assets/Game/Editor/PlaygroundBuilder(.Combat).cs 生成（菜单 SCP/…）。尚无场景加载、存档、玩法规则系统。
+- 目录：Assets/Scripts（运行时代码，命名空间 ScpParty）、Editor（编辑器脚本）、Scenes、Prefabs（含 Weapons/ 武器模型）、Materials、Data/Weapons（武器参数）、Resources（WeaponDatabase、FX 材质）、Settings（URP 配置，其中 SampleSceneProfile 是渲染管线引用的后处理配置，不是模板残留）。未使用 asmdef，编译进默认程序集。没有单元测试。
+- 场景、玩家/木桩/拾取物 prefab、武器数据与模型由 Assets/Editor/PlaygroundBuilder(.Combat).cs 生成（菜单 SCP/…）。尚无场景加载、存档、玩法规则系统。
 - 代码目录：Scripts/Core（出生点、服务器生成器、输入开关）、Network（LanSession）、Player（移动、推人、表现、复活、HUD）、Combat（Health、木桩、飘字）、Weapons（武器定义/拾取/攻击/子弹/特效）、DevTools（CombatSelfTest）。
 - 自动化验证：Builds/Windows/SCP.exe -batchmode -nographics -host -combatTest -quitAfter 75，再开一个 -client 127.0.0.1，查看日志中的 [CombatTest]。
 
@@ -29,3 +29,4 @@
 - 修改时保留 Assets 的 .meta；不提交生成缓存；依赖和 Unity 版本未经任务需要不升级。
 
 <!-- unity-onboarding:generated:end -->
+- 已知警告：日志中 “Missing types referenced from component UniversalRenderPipelineGlobalSettings … PathTracing” 来自 6000.4 保存的 URP 全局设置，6000.3 无此类型，不影响运行。
