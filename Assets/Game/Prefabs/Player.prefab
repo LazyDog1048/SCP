@@ -12,9 +12,13 @@ GameObject:
   - component: {fileID: 1980411651574806186}
   - component: {fileID: 922729582597599658}
   - component: {fileID: 7487336562736544478}
+  - component: {fileID: 2999013716774882805}
   - component: {fileID: 6488170714965168681}
   - component: {fileID: 1602559709177267651}
   - component: {fileID: 1927046131195388251}
+  - component: {fileID: 1405611709598912738}
+  - component: {fileID: 5665325745916112956}
+  - component: {fileID: 8126898468367501090}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -137,6 +141,23 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &2999013716774882805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2300789796366459026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9dee2281eec055c448b6ea37293308d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Combat.Health
+  ShowTopMostFoldoutHeaderGroup: 1
+  maxHealth: 100
+  canDie: 1
+  regenerateWhenIdle: 0
+  regenerateDelay: 3
 --- !u!114 &6488170714965168681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -186,6 +207,7 @@ MonoBehaviour:
   tackleUpForce: 4.5
   tackleLunge: 7
   tackleCooldown: 1.2
+  tackleDamage: 5
   serverRangeTolerance: 2
 --- !u!114 &1927046131195388251
 MonoBehaviour:
@@ -209,6 +231,50 @@ MonoBehaviour:
   knockdownAngle: -80
   fallSpeed: 400
   getUpSpeed: 160
+--- !u!114 &1405611709598912738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2300789796366459026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d41c71650324de4aa72d6a2241633cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Weapons.PlayerWeapons
+  ShowTopMostFoldoutHeaderGroup: 1
+  weaponAnchor: {fileID: 107221066766578919}
+  pickupPrefab: {fileID: 8850738620178244730, guid: bb3ed18ea2a0e0746a8fd82cf732fd86, type: 3}
+  pickupRange: 2.5
+  originTolerance: 1.5
+--- !u!114 &5665325745916112956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2300789796366459026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8513909fd00d58c4c8935152bef631b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Player.PlayerLife
+  ShowTopMostFoldoutHeaderGroup: 1
+  respawnDelay: 3
+--- !u!114 &8126898468367501090
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2300789796366459026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03cff6baf2bc9424fb2dcfef70423b75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Player.PlayerHud
+  ShowTopMostFoldoutHeaderGroup: 1
 --- !u!1 &2772549655205207389
 GameObject:
   m_ObjectHideFlags: 0
@@ -417,7 +483,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 1.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 107221066766578919}
   m_Father: {fileID: 2739451714541928529}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7196908669961872490
@@ -636,6 +703,37 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &8655940148524497180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 107221066766578919}
+  m_Layer: 0
+  m_Name: WeaponAnchor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &107221066766578919
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8655940148524497180}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.3, y: -0.3, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8187587380711104182}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8819859909688249110
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61b047ef741861e4db3f45580110a0a8, type: 3}
+  m_Name: Pistol
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Weapons.WeaponDefinition
+  displayName: "\u624B\u67AA"
+  kind: 1
+  model: {fileID: 1010905647630563045, guid: 1f7f834ccd3f4944f80551db5efd03f4, type: 3}
+  damage: 15
+  knockback: 3
+  knockbackUp: 0.5
+  knockDownOnHit: 0
+  fireInterval: 0.25
+  automatic: 0
+  range: 60
+  meleeAngle: 100
+  magazineSize: 8
+  reloadTime: 1.2
+  spread: 0.5
+  projectileModel: {fileID: 0}
+  projectileSpeed: 25
+  projectileGravity: 9.81
+  projectileRadius: 0.12
+  projectileLifetime: 3

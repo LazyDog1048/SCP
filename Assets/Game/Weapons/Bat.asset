@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61b047ef741861e4db3f45580110a0a8, type: 3}
+  m_Name: Bat
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Weapons.WeaponDefinition
+  displayName: "\u68D2\u7403\u68CD"
+  kind: 0
+  model: {fileID: 992343171252247577, guid: 36d42de6c518fe6448d68d234150ee6e, type: 3}
+  damage: 25
+  knockback: 10
+  knockbackUp: 3
+  knockDownOnHit: 0
+  fireInterval: 0.55
+  automatic: 0
+  range: 2.2
+  meleeAngle: 100
+  magazineSize: 0
+  reloadTime: 1.2
+  spread: 0
+  projectileModel: {fileID: 0}
+  projectileSpeed: 25
+  projectileGravity: 9.81
+  projectileRadius: 0.12
+  projectileLifetime: 3

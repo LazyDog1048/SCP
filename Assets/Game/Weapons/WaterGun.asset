@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61b047ef741861e4db3f45580110a0a8, type: 3}
+  m_Name: WaterGun
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Weapons.WeaponDefinition
+  displayName: "\u6C34\u67AA"
+  kind: 2
+  model: {fileID: 6330710047543477318, guid: 9edd1285ff66b0d4ab521d84dd430b98, type: 3}
+  damage: 8
+  knockback: 6
+  knockbackUp: 1.5
+  knockDownOnHit: 0
+  fireInterval: 0.15
+  automatic: 1
+  range: 30
+  meleeAngle: 100
+  magazineSize: 24
+  reloadTime: 1.5
+  spread: 2
+  projectileModel: {fileID: 6335297894575360667, guid: b2d845436851b3044806d79441dd7457, type: 3}
+  projectileSpeed: 22
+  projectileGravity: 6
+  projectileRadius: 0.12
+  projectileLifetime: 3

@@ -1,3 +1,4 @@
+using ScpParty.Combat;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -10,7 +11,7 @@ namespace ScpParty.Player
     /// 移动由拥有者本地计算（NetworkTransform 为 Owner 权限），其他端只看同步结果。
     /// </summary>
     [RequireComponent(typeof(CharacterController))]
-    public class PlayerController : NetworkBehaviour
+    public class PlayerController : NetworkBehaviour, IKnockbackReceiver
     {
         [Header("移动")]
         [SerializeField] float walkSpeed = 5f;
@@ -39,11 +40,15 @@ namespace ScpParty.Player
         public Transform Head => head;
         public bool IsSprinting { get; private set; }
 
-        /// <summary>本地拥有者是否可以响应游戏输入（鼠标已锁定，且未被扑倒）。</summary>
-        public bool CanAct => IsOwner && InputGate.GameplayEnabled && !IsKnockedDown.Value;
+        /// <summary>被扑倒或已死亡（所有端可读，用于表现）。</summary>
+        public bool IsDown => IsKnockedDown.Value || (health != null && health.IsDead.Value);
+
+        /// <summary>本地拥有者是否可以响应游戏输入（鼠标已锁定，且未倒地/死亡）。</summary>
+        public bool CanAct => IsOwner && InputGate.GameplayEnabled && !IsDown;
 
         CharacterController controller;
         NetworkTransform networkTransform;
+        Health health;
         InputAction moveAction, lookAction, jumpAction, sprintAction;
 
         Vector3 planarVelocity;
@@ -59,6 +64,7 @@ namespace ScpParty.Player
         {
             controller = GetComponent<CharacterController>();
             networkTransform = GetComponent<NetworkTransform>();
+            health = GetComponent<Health>();
         }
 
         public override void OnNetworkSpawn()
@@ -108,7 +114,7 @@ namespace ScpParty.Player
             UpdateMovement(dt);
 
             if (transform.position.y < fallResetHeight)
-                Respawn();
+                TeleportToSpawn();
         }
 
         void UpdateLook(float dt)
@@ -123,7 +129,7 @@ namespace ScpParty.Player
                 pitch = Mathf.Clamp(pitch - look.y, -pitchLimit, pitchLimit);
             }
 
-            float targetRoll = IsKnockedDown.Value ? knockdownCameraRoll : 0f;
+            float targetRoll = IsDown ? knockdownCameraRoll : 0f;
             roll = Mathf.MoveTowards(roll, targetRoll, 120f * dt);
             head.localRotation = Quaternion.Euler(pitch, 0f, roll);
         }
@@ -186,19 +192,34 @@ namespace ScpParty.Player
             }
         }
 
-        /// <summary>服务器在校验推人请求后调用，转发到被推玩家的拥有者执行。</summary>
+        /// <summary>服务器结算伤害后调用：击退由拥有者执行（移动是拥有者权威）。</summary>
+        public void ServerApplyKnockback(Vector3 impulse, bool knockDown) => ReceiveKnockbackRpc(impulse, knockDown);
+
         [Rpc(SendTo.Owner)]
-        public void ReceivePushRpc(Vector3 impulse, bool knockDown)
+        void ReceiveKnockbackRpc(Vector3 impulse, bool knockDown)
         {
             ApplyImpulse(impulse, knockDown);
         }
 
-        void Respawn()
+        /// <summary>服务器在复活时调用，让拥有者回到出生点。</summary>
+        [Rpc(SendTo.Owner)]
+        public void RespawnRpc()
+        {
+            IsKnockedDown.Value = false;
+            TeleportToSpawn();
+        }
+
+        public void TeleportToSpawn()
         {
             Transform spawn = SpawnPoints.Get(OwnerClientId);
             Vector3 position = spawn != null ? spawn.position : Vector3.up;
             Quaternion rotation = spawn != null ? spawn.rotation : Quaternion.identity;
+            TeleportTo(position, rotation);
+        }
 
+        /// <summary>拥有者调用：瞬移（不插值）。</summary>
+        public void TeleportTo(Vector3 position, Quaternion rotation)
+        {
             planarVelocity = externalVelocity = Vector3.zero;
             verticalVelocity = 0f;
 

@@ -56,7 +56,7 @@ namespace ScpParty.Player
 
         void LateUpdate()
         {
-            bool down = player.IsKnockedDown.Value;
+            bool down = player.IsDown;
             float target = down ? knockdownAngle : 0f;
             tilt = Mathf.MoveTowards(tilt, target, (down ? fallSpeed : getUpSpeed) * Time.deltaTime);
             body.localRotation = Quaternion.Euler(tilt, 0f, 0f);

@@ -1,7 +1,10 @@
 using System.IO;
 using System.Linq;
+using ScpParty.Combat;
+using ScpParty.DevTools;
 using ScpParty.Network;
 using ScpParty.Player;
+using ScpParty.Weapons;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using Unity.Netcode.Transports.UTP;
@@ -14,11 +17,11 @@ using UnityEngine.SceneManagement;
 namespace ScpParty.EditorTools
 {
     /// <summary>
-    /// 生成联机底子所需的 lowpoly 材质、玩家 prefab 与 Playground 测试场景。
+    /// 生成联机底子所需的 lowpoly 材质、玩家 prefab、武器与木桩（见 PlaygroundBuilder.Combat.cs）和 Playground 测试场景。
     /// 可重复执行：会覆盖这里列出的生成资源，不会触碰其他资源。
     /// 批处理：Unity.exe -batchmode -quit -projectPath . -executeMethod ScpParty.EditorTools.PlaygroundBuilder.BuildAll
     /// </summary>
-    public static class PlaygroundBuilder
+    public static partial class PlaygroundBuilder
     {
         const string Root = "Assets/Game";
         const string MaterialDir = Root + "/Materials";
@@ -35,11 +38,14 @@ namespace ScpParty.EditorTools
             if (!EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
                 return;
 
-            foreach (string dir in new[] { MaterialDir, Root + "/Prefabs", Root + "/Scenes" })
+            foreach (string dir in new[] { MaterialDir, Root + "/Prefabs", Root + "/Scenes", WeaponModelDir, WeaponDataDir, ResourcesDir + "/FX" })
                 Directory.CreateDirectory(dir);
+            AssetDatabase.Refresh();
 
-            var player = BuildPlayerPrefab();
-            BuildScene(player);
+            var combat = BuildCombatAssets();
+            var player = BuildPlayerPrefab(combat.Pickup);
+            BuildScene(player, combat);
+            RegisterNetworkPrefabs(player, combat.Pickup.gameObject, combat.Dummy.gameObject);
             SetBuildScenes();
             AssetDatabase.SaveAssets();
             Debug.Log("[PlaygroundBuilder] 完成：" + ScenePath);
@@ -63,13 +69,13 @@ namespace ScpParty.EditorTools
 
         // ---------- 材质 ----------
 
-        static Material Mat(string name, Color color, float smoothness = 0.05f)
+        static Material Mat(string name, Color color, float smoothness = 0.05f, string dir = MaterialDir, string shader = "Universal Render Pipeline/Lit")
         {
-            string path = $"{MaterialDir}/{name}.mat";
+            string path = $"{dir}/{name}.mat";
             var mat = AssetDatabase.LoadAssetAtPath<Material>(path);
             if (mat == null)
             {
-                mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+                mat = new Material(Shader.Find(shader));
                 AssetDatabase.CreateAsset(mat, path);
             }
             mat.SetColor("_BaseColor", color);
@@ -80,7 +86,7 @@ namespace ScpParty.EditorTools
 
         // ---------- 玩家 Prefab ----------
 
-        static GameObject BuildPlayerPrefab()
+        static GameObject BuildPlayerPrefab(WeaponPickup pickupPrefab)
         {
             var bodyMat = Mat("PlayerBody", Color.white);
             var visorMat = Mat("PlayerVisor", new Color(0.12f, 0.13f, 0.18f), 0.6f);
@@ -111,10 +117,20 @@ namespace ScpParty.EditorTools
             var head = new GameObject("Head").transform;
             head.SetParent(root.transform, false);
             head.localPosition = new Vector3(0f, 1.55f, 0f);
+            var weaponAnchor = new GameObject("WeaponAnchor").transform;
+            weaponAnchor.SetParent(head, false);
+            weaponAnchor.localPosition = new Vector3(0.3f, -0.3f, 0.5f);
 
+            root.AddComponent<Health>();
             var controller = root.AddComponent<PlayerController>();
             root.AddComponent<PlayerPush>();
             var visuals = root.AddComponent<PlayerVisuals>();
+            var weapons = root.AddComponent<PlayerWeapons>();
+            root.AddComponent<PlayerLife>();
+            root.AddComponent<PlayerHud>();
+
+            Set(weapons, "weaponAnchor", weaponAnchor);
+            Set(weapons, "pickupPrefab", pickupPrefab);
 
             var so = new SerializedObject(controller);
             so.FindProperty("head").objectReferenceValue = head;
@@ -155,7 +171,7 @@ namespace ScpParty.EditorTools
 
         // ---------- 场景 ----------
 
-        static void BuildScene(GameObject playerPrefab)
+        static void BuildScene(GameObject playerPrefab, CombatAssets combat)
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -203,6 +219,9 @@ namespace ScpParty.EditorTools
             network.NetworkConfig.PlayerPrefab = playerPrefab;
             network.NetworkConfig.ConnectionApproval = true;
             netGo.AddComponent<LanSession>();
+            netGo.AddComponent<CombatSelfTest>();
+
+            BuildTrainingArea(network, combat);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
         }

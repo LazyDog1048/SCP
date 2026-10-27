@@ -29,3 +29,13 @@
 - 菜单用 IMGUI 临时实现，正式 UI 待定。
 - 输入使用项目级 InputSystem_Actions 的 Player 动作表（Move/Look/Jump/Sprint/Attack），未新增动作。
 - PlayerSettings.runInBackground=1：联机游戏失焦时必须继续运行网络与逻辑。
+
+## 2026-10-28：战斗与武器方案
+
+- 已确认需求：地上捡武器（同时只拿一把，空手左键=推人）；玩家 100 血，归零倒地 3 秒后复活；第一版 4 把武器（棒球棍、平底锅、手枪、水枪）。
+- 伤害由服务器结算（Health 只允许服务器写），木桩、玩家、推人共用 Health；击退通过 IKnockbackReceiver 转给玩家拥有者执行（因为移动是拥有者权威）。
+- 命中判定在服务器：近战为头部前方扇形范围，手枪为服务器射线，水弹由服务器模拟一颗不联网的子弹结算伤害，其他端只模拟表现。没有延迟补偿，局域网可接受。
+- 武器参数放 ScriptableObject（Assets/Game/Weapons），武器表放 Resources/WeaponDatabase；网络只同步下标，所以调整武器表顺序后联机各方必须用同一版本。
+- 武器、木桩、拾取物的 prefab 也由 PlaygroundBuilder 生成；手调参数请改 Weapons/*.asset（生成器会覆盖数值），或者同步改生成器。
+- 输入：Interact 去掉模板自带的 Hold 交互（拾取需要按下即触发），新增 Drop、Reload 动作。
+- 自动化自测 CombatSelfTest 只在 -combatTest 参数下运行，正式游戏不受影响。

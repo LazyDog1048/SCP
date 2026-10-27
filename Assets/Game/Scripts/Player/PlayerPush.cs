@@ -1,3 +1,5 @@
+using ScpParty.Combat;
+using ScpParty.Weapons;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -5,8 +7,8 @@ using UnityEngine.InputSystem;
 namespace ScpParty.Player
 {
     /// <summary>
-    /// 推人 / 扑倒：拥有者检测前方玩家并向服务器请求，服务器校验后通知被推玩家的拥有者施加击退。
-    /// 冲刺中按攻击会向前扑出，命中时把对方扑倒。
+    /// 推人 / 扑倒（空手时的攻击）：拥有者检测前方可受击对象并向服务器请求，服务器校验后通过 Health 结算击退。
+    /// 冲刺中按攻击会向前扑出，命中时把对方扑倒并造成少量伤害。手持武器时不生效。
     /// </summary>
     [RequireComponent(typeof(PlayerController))]
     public class PlayerPush : NetworkBehaviour
@@ -24,11 +26,13 @@ namespace ScpParty.Player
         [SerializeField] float tackleUpForce = 4.5f;
         [SerializeField] float tackleLunge = 7f;
         [SerializeField] float tackleCooldown = 1.2f;
+        [SerializeField] int tackleDamage = 5;
 
         [Tooltip("服务器端校验距离时给延迟留的余量")]
         [SerializeField] float serverRangeTolerance = 2f;
 
         PlayerController player;
+        PlayerWeapons weapons;
         InputAction attackAction;
         float nextPushTime;
         float serverNextPushTime;
@@ -38,6 +42,7 @@ namespace ScpParty.Player
         void Awake()
         {
             player = GetComponent<PlayerController>();
+            weapons = GetComponent<PlayerWeapons>();
         }
 
         public override void OnNetworkSpawn()
@@ -48,7 +53,7 @@ namespace ScpParty.Player
 
         void Update()
         {
-            if (!IsOwner || !IsSpawned || !player.CanAct)
+            if (!IsOwner || !IsSpawned || !player.CanAct || (weapons != null && weapons.HasWeapon))
                 return;
             if (Time.time < nextPushTime || !attackAction.WasPressedThisFrame())
                 return;
@@ -60,23 +65,23 @@ namespace ScpParty.Player
             if (tackle)
                 player.ApplyImpulse(forward * tackleLunge, false);
 
-            PlayerController target = FindTarget(player.Head.forward);
+            Health target = FindTarget(player.Head.forward);
             if (target != null)
                 RequestPushRpc(target.NetworkObject, forward, tackle);
         }
 
-        PlayerController FindTarget(Vector3 aimDirection)
+        Health FindTarget(Vector3 aimDirection)
         {
             Vector3 origin = player.Head.position;
             int count = Physics.SphereCastNonAlloc(origin, radius, aimDirection, Hits, range,
                 Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
 
-            PlayerController best = null;
+            Health best = null;
             float bestDistance = float.MaxValue;
             for (int i = 0; i < count; i++)
             {
-                var other = Hits[i].collider.GetComponentInParent<PlayerController>();
-                if (other == null || other == player || Hits[i].distance >= bestDistance)
+                var other = Hits[i].collider.GetComponentInParent<Health>();
+                if (other == null || other.transform == transform || Hits[i].distance >= bestDistance)
                     continue;
                 best = other;
                 bestDistance = Hits[i].distance;
@@ -91,7 +96,7 @@ namespace ScpParty.Player
                 return;
             if (!targetRef.TryGet(out NetworkObject targetObject) || targetObject == NetworkObject)
                 return;
-            if (!targetObject.TryGetComponent(out PlayerController target))
+            if (!targetObject.TryGetComponent(out Health target))
                 return;
 
             // 简单防作弊：冷却与距离
@@ -108,7 +113,14 @@ namespace ScpParty.Player
             Vector3 impulse = tackle
                 ? dir * tackleForce + Vector3.up * tackleUpForce
                 : dir * pushForce + Vector3.up * pushUpForce;
-            target.ReceivePushRpc(impulse, tackle);
+            target.ApplyDamage(new DamageInfo
+            {
+                Amount = tackle ? tackleDamage : 0,
+                Point = target.transform.position + Vector3.up * 1.2f,
+                Knockback = impulse,
+                KnockDown = tackle,
+                AttackerId = OwnerClientId,
+            });
         }
 
         static Vector3 Flatten(Vector3 direction, Vector3 fallback)

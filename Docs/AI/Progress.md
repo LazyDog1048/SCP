@@ -5,13 +5,28 @@
 - 用户目标：将项目上传到自己的 Git，并允许另一位成员与其 AI 从共享上下文继续开发。
 - 用户已创建 GitHub 仓库：https://github.com/LazyDog1048/SCP 。远端 origin 已配置，main 跟踪 origin/main。
 - 已准备：Unity 忽略规则、文件属性、跨 AI 入口、项目事实与决策记录、团队分支工作流。
-- 游戏开发状态：3D lowpoly 多人联机派对游戏。已有局域网联机底子（见下方“联机底子”），尚无具体玩法规则。
+- 游戏开发状态：3D lowpoly 多人联机派对游戏。已有局域网联机底子、血量与伤害、4 把武器、训练木桩（见下方两节），尚无具体玩法规则。
 - Unity 版本：已改为 6000.3.27f1 LTS（URP 17.3.0），详见 Decisions.md。
 - 验证：2026-10-27 用 6000.3.27f1 以 batchmode（-batchmode -quit）打开项目，成功完成导入与脚本编译，日志无编译错误，退出码 0。未在编辑器 GUI 中打开场景，未运行测试或构建。
 - 本地首次提交：c6f2df1，main 分支；包含 68 个文件，缓存排除已检查。新增文档通过 Git 空白检查；原有 Unity 模板序列化文件保留原样。
 - 上传已完成：用户创建仓库，并通过 GitHub 设备验证完成本机 Git 认证，工程及 AI 上下文已推送到 main。此前浏览器创建/认证阻塞已解决。
 - 待完成：由所有者邀请协作者；对方克隆、使用 Unity 6000.3.27f1 首次导入验证，并让其 AI 按 AGENTS.md 读取交接。
 - 下一步开发前：请用户实测联机底子并提供首个派对玩法及验收条件，不要自行推断 SCP 具体设定。
+
+## 木桩与武器（2026-10-28 / Claude / main）
+
+- 用户需求：做假人木桩测试交互和伤害；玩家可以有近战道具或枪械。已确认：武器在地上捡（E 拾取、可丢弃）；玩家有血量，打空倒地后复活；第一版武器为棒球棍、平底锅、手枪（即时命中）、水枪（实体水弹）。
+- 已完成：
+  - 伤害系统 Assets/Game/Scripts/Combat：Health（服务器扣血、NetworkVariable 同步、受击 Rpc 广播、死亡事件）、DamageInfo/IKnockbackReceiver、DamagePopup（伤害飘字）、TrainingDummy（不死、停手 3 秒回满、受击摇晃、头顶显示 HP/上次伤害/DPS）。推人也改为走 Health（推 0 伤害，冲刺扑倒 5 伤害）。
+  - 武器 Assets/Game/Scripts/Weapons：WeaponDefinition（ScriptableObject 参数）、WeaponDatabase（Resources/WeaponDatabase，网络只同步下标）、WeaponPickup（地上武器，丢下的 30 秒后消失）、WeaponSpawnPoint、PlayerWeapons（拾取/丢弃/换弹/攻击，服务器判定）、Projectile（服务器那颗结算，其他端表现）、CombatFx（弹道线、命中碎块）。
+  - 玩家：PlayerLife（死亡丢武器，3 秒后满血复活回出生点）、PlayerHud（准星、命中标记、血条、武器子弹、拾取提示、受伤闪红、死亡倒计时）。
+  - 场景：训练区在场地 +X 侧（3 个木桩），武器架在出生圈内 z=-2.6（从左到右：棒球棍、平底锅、手枪、水枪），被捡走 8 秒后刷新。ServerSpawner 在服务器启动时生成木桩与武器。
+  - 输入：InputSystem_Actions 新增 Drop（G / 手柄十字键下）、Reload（R / 手柄右肩键），Interact 去掉 Hold。
+  - 自测：DevTools/CombatSelfTest，主机带 -combatTest 启动时自动跑战斗测试。
+- 武器参数（Assets/Game/Weapons/*.asset 可调）：棒球棍 25 伤/0.55s；平底锅 15 伤并扑倒/0.75s；手枪 15 伤/0.25s/8 发/换弹 1.2s；水枪 8 伤/0.15s 连发/24 发/换弹 1.5s。
+- 验证（实际执行）：batchmode 编译无错误无警告；生成器成功，3 个网络 prefab 哈希非 0 且已登记；Windows 构建成功；无窗口主机(-combatTest)+1 客户端：四把武器各打木桩 3 次均造成伤害（75/45/45/24），地上拾取成功，手枪 7 发打倒客户端玩家、3 秒后满血复活，客户端收到全部 19 次受击广播与死亡/复活状态，ALL PASSED。
+- 未验证：有画面的手感（挥动/后坐动画、弹道、飘字、HUD 中文、木桩文字）、真人键鼠输入下的拾取/丢弃/换弹、两台电脑局域网。
+- 已知限制：命中判定在服务器用同步后的位置（局域网延迟小可接受，无延迟补偿）；第一人称武器模型直接挂在相机前，可能穿进墙里；没有音效与角色动画。
 
 ## 联机底子（2026-10-28 / Claude / main）
 
@@ -49,3 +64,4 @@
 - 2026-10-28 / Claude / main：参考 TowerDefend 项目的 .gitignore 合并整理本项目 .gitignore，补充 AssetStoreTools、Rider 插件、ExportedObj、.consulo、*.unityproj/*.userprefs/*.booproj/*.svd/*.tmp、*.pdb.meta 等、sysinfo.txt、fmod_editor.log、*.apk/*.aab/*.unitypackage，以及 Assets 下 .meta 永不忽略规则。保留 UserSettings 忽略（TowerDefend 中该行被注释，但 AGENTS.md 要求不提交）。验证：git ls-files -ci --exclude-standard 为空，无已跟踪文件被误忽略。
 - 2026-10-28 / Claude / main：搭建局域网联机底子（Netcode for GameObjects 2.13.3、第一人称角色、推人/扑倒、Playground 场景与生成器），详见“联机底子”。
 - 2026-10-28 / Claude / main：PlayerSettings 开启 Run In Background（联机时失焦窗口不能暂停，否则主机停止同步），已重新构建 Windows 包。
+- 2026-10-28 / Claude / main：新增训练木桩、血量/死亡复活、四把可拾取武器与 HUD、自动化战斗自测，详见“木桩与武器”。

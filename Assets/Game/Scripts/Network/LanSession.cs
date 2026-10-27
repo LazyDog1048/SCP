@@ -249,7 +249,7 @@ namespace ScpParty.Network
 
         void DrawInGame()
         {
-            panelRect = new Rect(20, 20, 340, 120);
+            panelRect = new Rect(20, 20, 420, 120);
             GUILayout.BeginArea(panelRect, GUI.skin.box);
 
             string role = network.IsHost ? "主机" : "客户端";
@@ -261,7 +261,7 @@ namespace ScpParty.Network
                 GUILayout.Label("让朋友加入：" + string.Join("  ", localAddresses));
 
             GUILayout.Label(InputGate.GameplayEnabled
-                ? "Esc 释放鼠标 · 左键推人 · 冲刺(Shift)中左键扑倒"
+                ? "Esc 释放鼠标 · 空手左键推人/冲刺中扑倒 · E 拾取 · R 换弹 · G 丢弃"
                 : "点击画面继续游戏");
 
             if (GUILayout.Button("断开"))

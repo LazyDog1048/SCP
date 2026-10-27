@@ -16,7 +16,9 @@
 - Assets/Settings：渲染管线/模板设置。
 - Assets/TutorialInfo：模板说明；仅发现 Readme.cs（ScriptableObject）和 Editor/ReadmeEditor.cs（编辑器脚本）。
 - 自有代码在 Assets/Game（命名空间 ScpParty），未使用 asmdef，编译进默认程序集；Assets/Game/Editor 为编辑器脚本。没有自动化测试。
-- 场景与玩家 prefab 由 Assets/Game/Editor/PlaygroundBuilder.cs 生成（菜单 SCP/…）。尚无场景加载、存档、玩法规则系统。
+- 场景、玩家/木桩/拾取物 prefab、武器数据与模型由 Assets/Game/Editor/PlaygroundBuilder(.Combat).cs 生成（菜单 SCP/…）。尚无场景加载、存档、玩法规则系统。
+- 代码目录：Scripts/Core（出生点、服务器生成器、输入开关）、Network（LanSession）、Player（移动、推人、表现、复活、HUD）、Combat（Health、木桩、飘字）、Weapons（武器定义/拾取/攻击/子弹/特效）、DevTools（CombatSelfTest）。
+- 自动化验证：Builds/Windows/SCP.exe -batchmode -nographics -host -combatTest -quitAfter 75，再开一个 -client 127.0.0.1，查看日志中的 [CombatTest]。
 
 ## 验证、工具与未知项
 
