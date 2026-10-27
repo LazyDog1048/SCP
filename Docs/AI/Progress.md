@@ -13,6 +13,23 @@
 - 待完成：由所有者邀请协作者；对方克隆、使用 Unity 6000.3.27f1 首次导入验证，并让其 AI 按 AGENTS.md 读取交接。
 - 下一步开发前：请用户实测联机底子并提供首个派对玩法及验收条件，不要自行推断 SCP 具体设定。
 
+## 角色模型：探险小人（2026-10-28 / Claude / main）
+
+- 用户需求：用 Tripo 生成一个类似 PEAK 风格的 lowpoly 小人（原创设计），并绑骨。用户要求没有指令不许擅自生成；之后授权 AI 在其 Chrome（Claude in Chrome 插件）里直接操作 Tripo 网页版。
+- Tripo 账户情况：API 余额 0（`tripo balance`），网页版 Studio 有 200 免费积分（2026-11-01 到期）。免费账号的导出限制：只能导出 H2.5 模型（共 15 次），P2.0/H3.x 模型导出和「导出骨骼」都要订阅。
+- 网页版实际操作与扣费（网页积分 200 → 110）：
+  - P2.0 智能网格小人（三角面 5000）：生成用免费试用 0 积分，贴图 20，绑骨 20。造型最好，但免费账号导不出来，留在 Tripo 账号里（任务 c7e4f915-39e8-45ec-866f-79dca1da262a）。
+  - H2.5 小人（2K 贴图、三角面 5000、T 姿势、提示词要求眼睛无高光）：生成 30，绑骨 20。不带骨骼导出成功；绑骨后再导出，FBX 里没有骨骼与蒙皮（已检查无 LimbNode/Deformer），绑骨的 20 积分没有产出。任务 dd33797e-29fe-45bc-8471-a83251df4643。
+  - 剩余：网页积分 110，H2.5 免费导出 13 次，P2.0 免费试用 1 次。
+- 已完成：
+  - Assets/Models/Explorer：Explorer.fbx（H2.5 不带骨骼，5000 三角面）、Textures/（BaseColor 2K、Normal）、Explorer.mat（URP Lit，金属度 0、光滑度 0.15）、Explorer.prefab（脚底在原点、脸朝 +Z、身高 1.8 米与玩家胶囊一致，宽 1.92 米为 T 姿势两臂）。
+  - 编辑器脚本 Assets/Editor/ExplorerModelSetup.cs（菜单 SCP/模型/导入探险小人 Explorer）：设置导入参数、建材质、生成 prefab，并渲染正面/侧面预览图到 Logs/。Tripo 的 FBX 是 Z 轴朝上、趴着的，脚本里绕 X 转 -90° 修正。
+- 验证（实际执行）：batchmode 运行导入脚本成功、无编译错误；预览图确认站立、脸朝 +Z、背包在背后、比例正常。没有替换玩家外观、没有改 PlaygroundBuilder、没有重新构建或跑联机自测（本次没有改动运行时代码与场景）。
+- 未完成 / 下一步：
+  1. 绑骨：模型目前是静态的。可选做法：Mixamo（免费，需用户登录 Adobe）、在 Unity 里用脚本按距离算权重自动绑、安装 Blender 用自动权重绑、给 Tripo API 充值后 `tripo anim rig --spec unity`（约 25 积分）。用户还没决定。
+  2. 绑骨后：替换 Player.prefab 外观（需同步改 PlaygroundBuilder，避免重新生成时丢失；保持 CharacterController 不变；PlayerVisuals 目前按玩家编号上色、需改为对贴图材质染色或另行区分玩家），接 Animator（待机/走/跑），然后构建并跑 -combatTest 自测。
+  3. T 姿势两臂张开，作为静态外观直接替换玩家会很怪，建议等绑骨后再替换。
+
 ## 房间与门（2026-10-28 / Claude / main）
 
 - 用户需求：生成房间并放置物品（工作台那类）；房间 A 与房间 B 由一道门连接，玩家与门交互打开后可以去房间 B；木桩等现有道具保留在房间 A。
@@ -79,3 +96,4 @@
 - 2026-10-28 / Claude / main：新增训练木桩、血量/死亡复活、四把可拾取武器与 HUD、自动化战斗自测，详见“木桩与武器”。
 - 2026-10-28 / Claude / main：Assets 扁平化（去掉 Assets/Game 一层），删除模板 Readme、TutorialInfo、SampleScene；生成器路径同步更新。验证：batchmode 导入与 Windows 构建成功，主机+客户端 -combatTest ALL PASSED，生成器在新路径运行成功（场景重生成的 ID 变动已丢弃，保留移动后的原场景）。
 - 2026-10-28 / Claude / main：场地改为室内房间 A/B，新增可交互的联网门与工作台等道具，详见“房间与门”。
+- 2026-10-28 / Claude / main：用 Tripo 网页版生成探险小人，导入为 Assets/Models/Explorer（静态、未绑骨、未替换玩家外观），详见“角色模型：探险小人”。

@@ -47,6 +47,15 @@
 - 保留：Settings/ 全部（URP 管线、渲染器、手机画质档、全局设置、后处理配置 SampleSceneProfile 均被引用）、InputSystem_Actions、DefaultNetworkPrefabs。
 - 约定：以后导入的第三方插件保持其自带文件夹，不要混进 Scripts/Prefabs 等自有目录。
 
+## 2026-10-28：用 Tripo 生成模型
+
+- 已确认需求：用户用 Tripo 按需生成 lowpoly 模型替换占位外观；没有用户指令不得擅自生成（消耗积分）。用户后来授权 AI 直接在其 Chrome 里操作 Tripo 网页版，不必每步询问。
+- 生成的模型放 Assets/Models/<名称>/，每个模型配一个可重复运行的编辑器导入脚本（如 ExplorerModelSetup），负责导入参数、材质、比例与朝向，并输出 prefab；不要在 Inspector 里手调后不写回脚本。
+- 朝向：Tripo 网页版导出的 FBX（Blender 预设）在 Unity 里是 Z 轴朝上、趴着的，需绕 X 转 -90°。以后的模型也先渲染预览图确认朝向。
+- 尺寸：角色按玩家 CharacterController 高度 1.8 米缩放，脚底对原点。
+- 材质：URP Lit，只用 BaseColor + Normal，金属度 0，保持派对游戏的哑光平涂感；Tripo 给的 metallic/roughness 图不使用。
+- 限制：Tripo 免费网页账号只能导出 H2.5 模型（15 次），不能导出骨骼。P2.0 低多边形质量更好，但需要订阅或 API 积分才能拿到文件。选择 H2.5 是成本取舍，不是画质取舍。
+
 ## 2026-10-28：房间、门与交互
 
 - 已确认需求：房间 A、B 由门连接，玩家交互开门后可去 B；现有木桩等道具留在 A；房间里放工作台一类的物品。
