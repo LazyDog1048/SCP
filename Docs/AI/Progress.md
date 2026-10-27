@@ -48,3 +48,4 @@
 - 2026-10-27 / Claude / main：按用户要求将 Unity 版本从 6000.4.7f1 改为 6000.3.27f1，URP 17.4.0→17.3.0；batchmode 导入编译通过；记录游戏类型为多人联机派对游戏。改动文件：ProjectSettings/ProjectVersion.txt、Packages/manifest.json、Packages/packages-lock.json、ProjectSettings/EditorBuildSettings.asset、ProjectSettings/ShaderGraphSettings.asset、README.md、Docs/AI/*。
 - 2026-10-28 / Claude / main：参考 TowerDefend 项目的 .gitignore 合并整理本项目 .gitignore，补充 AssetStoreTools、Rider 插件、ExportedObj、.consulo、*.unityproj/*.userprefs/*.booproj/*.svd/*.tmp、*.pdb.meta 等、sysinfo.txt、fmod_editor.log、*.apk/*.aab/*.unitypackage，以及 Assets 下 .meta 永不忽略规则。保留 UserSettings 忽略（TowerDefend 中该行被注释，但 AGENTS.md 要求不提交）。验证：git ls-files -ci --exclude-standard 为空，无已跟踪文件被误忽略。
 - 2026-10-28 / Claude / main：搭建局域网联机底子（Netcode for GameObjects 2.13.3、第一人称角色、推人/扑倒、Playground 场景与生成器），详见“联机底子”。
+- 2026-10-28 / Claude / main：PlayerSettings 开启 Run In Background（联机时失焦窗口不能暂停，否则主机停止同步），已重新构建 Windows 包。

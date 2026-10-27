@@ -28,3 +28,4 @@
 - 场景/prefab 由编辑器脚本 PlaygroundBuilder 生成，便于 AI 在 batchmode 下复现与审查；重新生成会覆盖 Playground.unity 和 Player.prefab，手工在编辑器中改过后不要再运行生成器，或先把改动写回生成器。
 - 菜单用 IMGUI 临时实现，正式 UI 待定。
 - 输入使用项目级 InputSystem_Actions 的 Player 动作表（Move/Look/Jump/Sprint/Attack），未新增动作。
+- PlayerSettings.runInBackground=1：联机游戏失焦时必须继续运行网络与逻辑。
