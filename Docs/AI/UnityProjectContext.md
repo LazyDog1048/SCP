@@ -8,20 +8,20 @@
 - 渲染：URP 17.3.0（6000.3 内置版本）；GraphicsSettings.asset 已指定渲染管线资源，Assets/Settings 保存渲染设置。
 - 输入：Input System 1.19.0；ProjectSettings.asset 的 activeInputHandler=1，Assets/InputSystem_Actions.inputactions 保存输入动作。
 - 相关依赖：AI Navigation 2.0.12、Timeline 1.8.12、uGUI 2.0.0、Visual Scripting 1.9.11、Unity Test Framework 1.6.0。来源：Packages/manifest.json、packages-lock.json。
-- Multiplayer Center 存在，但尚无网络库或游戏网络代码；联机方案（Netcode、Relay/Lobby 等）未选定。
+- 联机：Netcode for GameObjects 2.13.3（局域网，Unity Transport），尚未接入 Relay/Lobby。
 
 ## 目录、程序集及启动
 
-- Assets/Scenes/SampleScene.unity：EditorBuildSettings.asset 中唯一启用场景，也是当前启动候选。
+- Assets/Game/Scenes/Playground.unity：首个启用的构建场景（联机测试场地）。Assets/Scenes/SampleScene.unity 保留但在构建中禁用。
 - Assets/Settings：渲染管线/模板设置。
 - Assets/TutorialInfo：模板说明；仅发现 Readme.cs（ScriptableObject）和 Editor/ReadmeEditor.cs（编辑器脚本）。
-- 未发现自有游戏代码、asmdef 或专用测试。现有脚本使用默认程序集，Editor 目录由 Unity 隔离。
-- 尚未建立游戏架构、场景加载系统、存档系统或统一代码规范；不可从模板脚本推断正式规范。
+- 自有代码在 Assets/Game（命名空间 ScpParty），未使用 asmdef，编译进默认程序集；Assets/Game/Editor 为编辑器脚本。没有自动化测试。
+- 场景与玩家 prefab 由 Assets/Game/Editor/PlaygroundBuilder.cs 生成（菜单 SCP/…）。尚无场景加载、存档、玩法规则系统。
 
 ## 验证、工具与未知项
 
 - 已通过静态读取版本、依赖、构建场景及代表性脚本建立基线。
-- 未运行 Unity 编译、EditMode/PlayMode 测试或构建；没有已验证可玩的功能。
+- 2026-10-28 已在 6000.3.27f1 batchmode 编译、Windows 构建，并用无窗口主机+2 客户端验证连接与玩家生成；有画面的手感与推人尚未实测。
 - 当前会话无可用 Unity MCP 工具；manifest 未发现 Unity MCP 依赖。其他成员的本机工具需重新检查。
 - 目标平台、游戏设计、多人联机需求、测试策略均待用户确认。
 - 修改时保留 Assets 的 .meta；不提交生成缓存；依赖和 Unity 版本未经任务需要不升级。
