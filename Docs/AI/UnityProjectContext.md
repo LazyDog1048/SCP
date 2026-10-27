@@ -3,12 +3,12 @@
 <!-- unity-onboarding:generated:start -->
 
 - 分析日期：2026-10-27（Asia/Hong_Kong）。分析基线：首次 Git 提交之前的工程；之后参考 Git 历史。
-- 项目名：SCP。已确认目前为初始模板；游戏玩法、目标平台及完成标准尚未确定。
-- Unity：6000.4.7f1，revision f3c3c4248748（ProjectSettings/ProjectVersion.txt）。
-- 渲染：URP 17.4.0；GraphicsSettings.asset 已指定渲染管线资源，Assets/Settings 保存渲染设置。
+- 项目名：SCP。用户已说明类型为多人联机派对游戏；目前仍为初始模板，具体玩法、目标平台及完成标准尚未确定。
+- Unity：6000.3.27f1，revision 672d562a42a7（ProjectSettings/ProjectVersion.txt）。2026-10-27 由 6000.4.7f1 降级，见 Decisions.md。
+- 渲染：URP 17.3.0（6000.3 内置版本）；GraphicsSettings.asset 已指定渲染管线资源，Assets/Settings 保存渲染设置。
 - 输入：Input System 1.19.0；ProjectSettings.asset 的 activeInputHandler=1，Assets/InputSystem_Actions.inputactions 保存输入动作。
 - 相关依赖：AI Navigation 2.0.12、Timeline 1.8.12、uGUI 2.0.0、Visual Scripting 1.9.11、Unity Test Framework 1.6.0。来源：Packages/manifest.json、packages-lock.json。
-- Multiplayer Center 存在，但没有游戏网络代码证据；不可据此认定游戏已实现多人联机。
+- Multiplayer Center 存在，但尚无网络库或游戏网络代码；联机方案（Netcode、Relay/Lobby 等）未选定。
 
 ## 目录、程序集及启动
 

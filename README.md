@@ -5,7 +5,7 @@ Unity 项目。当前为初始 URP 工程，尚无已实现的游戏系统。
 ## 打开项目
 
 1. 克隆仓库，在 Unity Hub 中选择仓库根目录。
-2. 使用 **Unity 6000.4.7f1**，等待依赖恢复与资源导入。
+2. 使用 **Unity 6000.3.27f1**，等待依赖恢复与资源导入。
 3. 打开 `Assets/Scenes/SampleScene.unity`。
 
 仓库保存 `Assets/`（包含 `.meta`）、`Packages/` 和 `ProjectSettings/`。缓存由各成员本地生成。
