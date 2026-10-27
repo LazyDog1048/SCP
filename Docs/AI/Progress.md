@@ -5,13 +5,25 @@
 - 用户目标：将项目上传到自己的 Git，并允许另一位成员与其 AI 从共享上下文继续开发。
 - 用户已创建 GitHub 仓库：https://github.com/LazyDog1048/SCP 。远端 origin 已配置，main 跟踪 origin/main。
 - 已准备：Unity 忽略规则、文件属性、跨 AI 入口、项目事实与决策记录、团队分支工作流。
-- 游戏开发状态：3D lowpoly 多人联机派对游戏。已有局域网联机底子、血量与伤害、4 把武器、训练木桩（见下方两节），尚无具体玩法规则。
+- 游戏开发状态：3D lowpoly 多人联机派对游戏。已有局域网联机底子、血量与伤害、4 把武器、训练木桩、两个由门连接的房间（见下方各节），尚无具体玩法规则。
 - Unity 版本：已改为 6000.3.27f1 LTS（URP 17.3.0），详见 Decisions.md。
 - 验证：2026-10-27 用 6000.3.27f1 以 batchmode（-batchmode -quit）打开项目，成功完成导入与脚本编译，日志无编译错误，退出码 0。未在编辑器 GUI 中打开场景，未运行测试或构建。
 - 本地首次提交：c6f2df1，main 分支；包含 68 个文件，缓存排除已检查。新增文档通过 Git 空白检查；原有 Unity 模板序列化文件保留原样。
 - 上传已完成：用户创建仓库，并通过 GitHub 设备验证完成本机 Git 认证，工程及 AI 上下文已推送到 main。此前浏览器创建/认证阻塞已解决。
 - 待完成：由所有者邀请协作者；对方克隆、使用 Unity 6000.3.27f1 首次导入验证，并让其 AI 按 AGENTS.md 读取交接。
 - 下一步开发前：请用户实测联机底子并提供首个派对玩法及验收条件，不要自行推断 SCP 具体设定。
+
+## 房间与门（2026-10-28 / Claude / main）
+
+- 用户需求：生成房间并放置物品（工作台那类）；房间 A 与房间 B 由一道门连接，玩家与门交互打开后可以去房间 B；木桩等现有道具保留在房间 A。
+- 已完成：
+  - 场地由露天小岛改为室内：房间 A（内部 x -13~13，z -11~11）放出生点、木桩、武器、箱子、高台、矮墙；房间 B（x -8~8，z 11.4~25.4）是工作间。两房间共用 A 的北墙，门在 (0, 0, 11.2)。层高 5 米，屋顶不投影（阳光照进室内），每间 2 盏暖色吊灯。小岛地面、树及其材质已删除。
+  - 交互 Assets/Scripts/Interaction：Interactable（基类，提示文字 + 服务器交互）、Door（服务器切换 IsOpen，门板绕铰链转动，碰撞体随门板）、PlayerInteractor（视线射线找可交互物，E 发给服务器，服务器校验距离）。看着门时 E 不会拾取武器；HUD 显示“E 开门/关门”。
+  - 道具 prefab Assets/Prefabs/Props：Workbench、WallWorkbench（带工具挂板）、Shelf、Crate、Lamp（带点光源）。武器改放在房间 A 中间两张工作台上（台面高 0.95）。
+  - ServerSpawner 改为通用生成组（prefab + 位置组），现在生成木桩和门；门 prefab Assets/Prefabs/Door.prefab 由服务器生成。
+  - 生成器新增 Assets/Editor/PlaygroundBuilder.Rooms.cs。
+- 验证（实际执行）：batchmode 编译无错误；生成器成功，4 个网络 prefab 已登记；Windows 构建成功；主机(-combatTest)+客户端自测 ALL PASSED，新增门测试：关门挡住门洞、开门后通畅、玩家站进房间 B (0, 0.04, 14.2)、从 B 侧关门后再次挡住，客户端收到开关同步。原有武器/拾取/PvP 测试仍全部通过。
+- 未验证：有画面的室内光照效果与道具外观、真人按 E 开门手感、门关上时夹到玩家的表现（目前不做处理）。
 
 ## 木桩与武器（2026-10-28 / Claude / main）
 
@@ -66,3 +78,4 @@
 - 2026-10-28 / Claude / main：PlayerSettings 开启 Run In Background（联机时失焦窗口不能暂停，否则主机停止同步），已重新构建 Windows 包。
 - 2026-10-28 / Claude / main：新增训练木桩、血量/死亡复活、四把可拾取武器与 HUD、自动化战斗自测，详见“木桩与武器”。
 - 2026-10-28 / Claude / main：Assets 扁平化（去掉 Assets/Game 一层），删除模板 Readme、TutorialInfo、SampleScene；生成器路径同步更新。验证：batchmode 导入与 Windows 构建成功，主机+客户端 -combatTest ALL PASSED，生成器在新路径运行成功（场景重生成的 ID 变动已丢弃，保留移动后的原场景）。
+- 2026-10-28 / Claude / main：场地改为室内房间 A/B，新增可交互的联网门与工作台等道具，详见“房间与门”。

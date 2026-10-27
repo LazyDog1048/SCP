@@ -1,4 +1,5 @@
 using ScpParty.Combat;
+using ScpParty.Interaction;
 using ScpParty.Weapons;
 using Unity.Netcode;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace ScpParty.Player
         Health health;
         PlayerWeapons weapons;
         PlayerLife life;
+        PlayerInteractor interactor;
         float hitMarkerUntil;
         float damageFlashUntil;
         static Texture2D white;
@@ -23,6 +25,7 @@ namespace ScpParty.Player
             health = GetComponent<Health>();
             weapons = GetComponent<PlayerWeapons>();
             life = GetComponent<PlayerLife>();
+            interactor = GetComponent<PlayerInteractor>();
         }
 
         public override void OnNetworkSpawn()
@@ -93,8 +96,10 @@ namespace ScpParty.Player
                     : def.displayName;
             GUI.Label(weaponRect, weaponText + (def != null ? "\n<size=13>R 换弹 · G 丢弃</size>" : ""), center);
 
-            // 拾取提示
-            if (weapons != null && weapons.LookedAtPickup != null && weapons.LookedAtPickup.Definition != null)
+            // 交互 / 拾取提示
+            if (interactor != null && interactor.Target != null)
+                GUI.Label(new Rect(cc.x - 200 * s, cc.y + 40 * s, 400 * s, 30 * s), $"E {interactor.Target.Prompt}", center);
+            else if (weapons != null && weapons.LookedAtPickup != null && weapons.LookedAtPickup.Definition != null)
                 GUI.Label(new Rect(cc.x - 200 * s, cc.y + 40 * s, 400 * s, 30 * s), $"E 拾取 {weapons.LookedAtPickup.Definition.displayName}", center);
 
             // 死亡

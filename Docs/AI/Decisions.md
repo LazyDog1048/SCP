@@ -46,3 +46,12 @@
 - 做法：Assets/Game 下的 Scripts、Editor、Prefabs、Materials、Resources、Scenes 移到 Assets 根目录，武器参数放 Assets/Data/Weapons；删除 Readme.asset、TutorialInfo/、Scenes/SampleScene.unity 及其构建项。移动时保留 .meta，GUID 不变。
 - 保留：Settings/ 全部（URP 管线、渲染器、手机画质档、全局设置、后处理配置 SampleSceneProfile 均被引用）、InputSystem_Actions、DefaultNetworkPrefabs。
 - 约定：以后导入的第三方插件保持其自带文件夹，不要混进 Scripts/Prefabs 等自有目录。
+
+## 2026-10-28：房间、门与交互
+
+- 已确认需求：房间 A、B 由门连接，玩家交互开门后可去 B；现有木桩等道具留在 A；房间里放工作台一类的物品。
+- 场地改为室内，原露天小岛删除（推断：用户要的是房间式场景；如需保留户外区域可在生成器中加回）。
+- 屋顶 shadowCastingMode=Off，让平行光照进室内，再加暖色点光源；这是风格化取舍，若改为真实室内光照需要关闭此设置并调整灯光。
+- 交互采用通用 Interactable + PlayerInteractor：客户端射线选目标，服务器校验距离后执行；被墙挡住时不可交互。以后的开关、箱子等继承 Interactable 即可。E 优先交给可交互物，其次才是拾取武器。
+- 门是服务器生成的网络物体（与木桩一样由 ServerSpawner 生成），不使用场景内放置的 NetworkObject，避免 batchmode 生成场景时的哈希问题。
+- 道具是普通（非联网）静态 prefab，放在 Prefabs/Props，可以在编辑器里自由摆放；注意重新运行生成器会重建整个 Playground 场景。

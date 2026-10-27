@@ -218,7 +218,7 @@ namespace ScpParty.EditorTools
             return prefab;
         }
 
-        static void BuildTrainingArea(NetworkManager network, CombatAssets combat)
+        static void BuildTrainingArea(NetworkManager network, CombatAssets combat, NetworkObject doorPrefab, Transform doorPoints, Transform weaponPoints)
         {
             var stone = Mat("Stone", new Color(0.72f, 0.72f, 0.76f));
 
@@ -235,23 +235,23 @@ namespace ScpParty.EditorTools
                 point.rotation = Quaternion.LookRotation(Vector3.left);
             }
 
-            var weaponPoints = new GameObject("WeaponPoints").transform;
-            weaponPoints.SetParent(area, false);
-            for (int i = 0; i < combat.WeaponCount; i++)
-            {
-                var point = new GameObject($"WeaponSpawn{i + 1}");
-                point.transform.SetParent(weaponPoints, false);
-                point.transform.position = new Vector3(-3f + i * 2f, 0f, -2.6f);
-                var spawn = point.AddComponent<WeaponSpawnPoint>();
-                Set(spawn, "weaponIndex", i);
-            }
-
-            var spawner = area.gameObject.AddComponent<ServerSpawner>();
+            var spawnerGo = new GameObject("ServerSpawner");
+            var spawner = spawnerGo.AddComponent<ServerSpawner>();
             Set(spawner, "network", network);
-            Set(spawner, "dummyPrefab", combat.Dummy);
             Set(spawner, "pickupPrefab", combat.Pickup);
-            Set(spawner, "dummyPoints", dummies);
             Set(spawner, "weaponPoints", weaponPoints);
+
+            var so = new SerializedObject(spawner);
+            var groups = so.FindProperty("groups");
+            var entries = new (NetworkObject prefab, Transform points)[] { (combat.Dummy, dummies), (doorPrefab, doorPoints) };
+            groups.arraySize = entries.Length;
+            for (int i = 0; i < entries.Length; i++)
+            {
+                var g = groups.GetArrayElementAtIndex(i);
+                g.FindPropertyRelative("prefab").objectReferenceValue = entries[i].prefab;
+                g.FindPropertyRelative("points").objectReferenceValue = entries[i].points;
+            }
+            so.ApplyModifiedPropertiesWithoutUndo();
         }
 
         static void RegisterNetworkPrefabs(params GameObject[] prefabs)

@@ -16,8 +16,9 @@
 - Assets/Settings：渲染管线/模板设置。
 - Assets/TutorialInfo：模板说明；仅发现 Readme.cs（ScriptableObject）和 Editor/ReadmeEditor.cs（编辑器脚本）。
 - 目录：Assets/Scripts（运行时代码，命名空间 ScpParty）、Editor（编辑器脚本）、Scenes、Prefabs（含 Weapons/ 武器模型）、Materials、Data/Weapons（武器参数）、Resources（WeaponDatabase、FX 材质）、Settings（URP 配置，其中 SampleSceneProfile 是渲染管线引用的后处理配置，不是模板残留）。未使用 asmdef，编译进默认程序集。没有单元测试。
-- 场景、玩家/木桩/拾取物 prefab、武器数据与模型由 Assets/Editor/PlaygroundBuilder(.Combat).cs 生成（菜单 SCP/…）。尚无场景加载、存档、玩法规则系统。
-- 代码目录：Scripts/Core（出生点、服务器生成器、输入开关）、Network（LanSession）、Player（移动、推人、表现、复活、HUD）、Combat（Health、木桩、飘字）、Weapons（武器定义/拾取/攻击/子弹/特效）、DevTools（CombatSelfTest）。
+- 场景、玩家/木桩/拾取物 prefab、武器数据与模型由 Assets/Editor/PlaygroundBuilder(.Combat/.Rooms).cs 生成（菜单 SCP/…）。尚无场景加载、存档、玩法规则系统。
+- 代码目录：Scripts/Core（出生点、服务器生成器、输入开关）、Network（LanSession）、Player（移动、推人、表现、复活、HUD）、Combat（Health、木桩、飘字）、Weapons（武器定义/拾取/攻击/子弹/特效）、Interaction（可交互基类、门、玩家交互）、DevTools（CombatSelfTest）。
+- Playground 布局：室内房间 A（出生点、木桩、武器工作台）与北侧房间 B（工作间），门在 (0,0,11.2)。道具 prefab 在 Prefabs/Props。
 - 自动化验证：Builds/Windows/SCP.exe -batchmode -nographics -host -combatTest -quitAfter 75，再开一个 -client 127.0.0.1，查看日志中的 [CombatTest]。
 
 ## 验证、工具与未知项

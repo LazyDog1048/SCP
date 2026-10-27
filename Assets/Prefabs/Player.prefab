@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7487336562736544478}
   - component: {fileID: 2999013716774882805}
   - component: {fileID: 6488170714965168681}
+  - component: {fileID: 3202979648730606766}
   - component: {fileID: 1602559709177267651}
   - component: {fileID: 1927046131195388251}
   - component: {fileID: 1405611709598912738}
@@ -185,6 +186,21 @@ MonoBehaviour:
   knockdownDuration: 1.6
   knockdownCameraRoll: 25
   fallResetHeight: -20
+--- !u!114 &3202979648730606766
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2300789796366459026}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 13e73e7aefb7c404cab5525b4abb48e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ScpParty.Interaction.PlayerInteractor
+  ShowTopMostFoldoutHeaderGroup: 1
+  rayLength: 3
+  serverTolerance: 1.5
 --- !u!114 &1602559709177267651
 MonoBehaviour:
   m_ObjectHideFlags: 0

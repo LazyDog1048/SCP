@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Linq;
 using ScpParty.Combat;
+using ScpParty.Interaction;
 using ScpParty.Player;
 using ScpParty.Weapons;
 using Unity.Netcode;
@@ -11,7 +12,7 @@ namespace ScpParty.DevTools
 {
     /// <summary>
     /// 自动化战斗自测（仅在主机带 -combatTest 参数启动时运行，不影响正常游戏）：
-    /// 依次用每把武器打木桩、测试捡武器、用手枪把一名客户端玩家打倒并等待复活，结果写入日志 [CombatTest]。
+    /// 依次用每把武器打木桩、测试捡武器、用手枪把一名客户端玩家打倒并等待复活、开门进入房间 B，结果写入日志 [CombatTest]。
     /// 用法：SCP.exe -batchmode -nographics -host -combatTest -quitAfter 60
     /// </summary>
     public class CombatSelfTest : MonoBehaviour
@@ -103,7 +104,38 @@ namespace ScpParty.DevTools
                 Check(!victimHealth.IsDead.Value && victimHealth.Current.Value == victimHealth.Max, "client player revived with full health");
             }
 
+            yield return DoorTest(controller, me.GetComponent<PlayerInteractor>());
+
             Log(failures == 0 ? "ALL PASSED" : $"FAILED ({failures})");
+        }
+
+        IEnumerator DoorTest(PlayerController controller, PlayerInteractor interactor)
+        {
+            var door = FindObjectsByType<Door>(FindObjectsSortMode.None).FirstOrDefault();
+            Check(door != null, "door spawned");
+            if (door == null)
+                yield break;
+
+            Vector3 doorPos = door.transform.position;
+            Vector3 rayFrom = doorPos + new Vector3(0.2f, 1.2f, -1.5f);
+            bool Blocked() => Physics.Raycast(rayFrom, Vector3.forward, 3f);
+
+            controller.TeleportTo(doorPos + new Vector3(0f, 0f, -1.6f), Quaternion.LookRotation(Vector3.forward));
+            yield return new WaitForSeconds(0.5f);
+            Check(!door.IsOpen.Value && Blocked(), "door starts closed and blocks the doorway");
+
+            Check(interactor.ServerTryInteract(door) && door.IsOpen.Value, "player opened door");
+            yield return new WaitForSeconds(1.2f);
+            Check(!Blocked(), "open door leaves doorway clear");
+
+            controller.TeleportTo(doorPos + new Vector3(0f, 0.1f, 3f), Quaternion.LookRotation(Vector3.back));
+            yield return new WaitForSeconds(0.8f);
+            Vector3 p = controller.transform.position;
+            Check(p.z > doorPos.z + 1f && p.y > -0.5f && p.y < 1f, $"player stands in room B at {p}");
+
+            Check(interactor.ServerTryInteract(door) && !door.IsOpen.Value, "player closed door from room B");
+            yield return new WaitForSeconds(1.2f);
+            Check(Blocked(), "closed door blocks doorway again");
         }
 
         void Check(bool ok, string what)

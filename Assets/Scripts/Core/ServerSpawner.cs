@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ScpParty.Weapons;
 using Unity.Netcode;
@@ -6,14 +7,21 @@ using UnityEngine;
 namespace ScpParty
 {
     /// <summary>
-    /// 服务器启动时生成场景里的网络物体：训练木桩、武器刷新点。武器被捡走后按刷新点的间隔重新出现。
+    /// 服务器启动时生成场景里的网络物体：每个生成组把一个 prefab 放到 points 的每个子物体位置（木桩、门等）；
+    /// 武器刷新点单独处理，被捡走后按刷新点的间隔重新出现。
     /// </summary>
     public class ServerSpawner : MonoBehaviour
     {
+        [Serializable]
+        public class SpawnGroup
+        {
+            public NetworkObject prefab;
+            public Transform points;
+        }
+
         [SerializeField] NetworkManager network;
-        [SerializeField] NetworkObject dummyPrefab;
+        [SerializeField] SpawnGroup[] groups;
         [SerializeField] WeaponPickup pickupPrefab;
-        [SerializeField] Transform dummyPoints;
         [SerializeField] Transform weaponPoints;
 
         readonly List<(WeaponSpawnPoint point, float respawnAt)> pending = new();
@@ -35,8 +43,15 @@ namespace ScpParty
         void OnServerStarted()
         {
             pending.Clear();
-            foreach (Transform point in dummyPoints)
-                Instantiate(dummyPrefab, point.position, point.rotation).Spawn(true);
+            foreach (var group in groups)
+            {
+                foreach (Transform point in group.points)
+                {
+                    var obj = Instantiate(group.prefab, point.position, point.rotation);
+                    obj.name = point.name;
+                    obj.Spawn(true);
+                }
+            }
             foreach (var point in weaponPoints.GetComponentsInChildren<WeaponSpawnPoint>())
                 SpawnAt(point);
         }

@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using ScpParty.Combat;
 using ScpParty.DevTools;
+using ScpParty.Interaction;
 using ScpParty.Network;
 using ScpParty.Player;
 using ScpParty.Weapons;
@@ -17,7 +18,7 @@ using UnityEngine.SceneManagement;
 namespace ScpParty.EditorTools
 {
     /// <summary>
-    /// 生成联机底子所需的 lowpoly 材质、玩家 prefab、武器与木桩（见 PlaygroundBuilder.Combat.cs）和 Playground 测试场景。
+    /// 生成联机底子所需的 lowpoly 材质、玩家 prefab、武器与木桩（PlaygroundBuilder.Combat.cs）、房间与门（PlaygroundBuilder.Rooms.cs）和 Playground 测试场景。
     /// 可重复执行：会覆盖这里列出的生成资源，不会触碰其他资源。
     /// 批处理：Unity.exe -batchmode -quit -projectPath . -executeMethod ScpParty.EditorTools.PlaygroundBuilder.BuildAll
     /// </summary>
@@ -42,9 +43,10 @@ namespace ScpParty.EditorTools
             AssetDatabase.Refresh();
 
             var combat = BuildCombatAssets();
+            var door = BuildDoorPrefab();
             var player = BuildPlayerPrefab(combat.Pickup);
-            BuildScene(player, combat);
-            RegisterNetworkPrefabs(player, combat.Pickup.gameObject, combat.Dummy.gameObject);
+            BuildScene(player, combat, door);
+            RegisterNetworkPrefabs(player, combat.Pickup.gameObject, combat.Dummy.gameObject, door.gameObject);
             SetBuildScenes();
             AssetDatabase.SaveAssets();
             Debug.Log("[PlaygroundBuilder] 完成：" + ScenePath);
@@ -122,6 +124,7 @@ namespace ScpParty.EditorTools
 
             root.AddComponent<Health>();
             var controller = root.AddComponent<PlayerController>();
+            root.AddComponent<PlayerInteractor>();
             root.AddComponent<PlayerPush>();
             var visuals = root.AddComponent<PlayerVisuals>();
             var weapons = root.AddComponent<PlayerWeapons>();
@@ -170,7 +173,7 @@ namespace ScpParty.EditorTools
 
         // ---------- 场景 ----------
 
-        static void BuildScene(GameObject playerPrefab, CombatAssets combat)
+        static void BuildScene(GameObject playerPrefab, CombatAssets combat, NetworkObject doorPrefab)
         {
             var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
 
@@ -202,9 +205,11 @@ namespace ScpParty.EditorTools
             cam.fieldOfView = 75f;
             camGo.AddComponent<AudioListener>();
             camGo.AddComponent<CameraHome>();
-            camGo.transform.position = new Vector3(0f, 14f, -18f);
-            camGo.transform.LookAt(Vector3.zero);
+            // 菜单时的俯瞰视角：房间 A 西南角
+            camGo.transform.position = new Vector3(-11.5f, 3.8f, -9.5f);
+            camGo.transform.LookAt(new Vector3(2f, 0.5f, 2f));
 
+            var doorPoints = BuildRooms(out var weaponPoints);
             BuildLevel();
             BuildSpawnPoints();
 
@@ -220,25 +225,20 @@ namespace ScpParty.EditorTools
             netGo.AddComponent<LanSession>();
             netGo.AddComponent<CombatSelfTest>();
 
-            BuildTrainingArea(network, combat);
+            BuildTrainingArea(network, combat, doorPrefab, doorPoints, weaponPoints);
 
             EditorSceneManager.SaveScene(scene, ScenePath);
         }
 
         static void BuildLevel()
         {
-            var grass = Mat("Ground", new Color(0.50f, 0.78f, 0.42f));
-            var dirt = Mat("Dirt", new Color(0.62f, 0.47f, 0.33f));
             var stone = Mat("Stone", new Color(0.72f, 0.72f, 0.76f));
             var wood = Mat("Wood", new Color(0.85f, 0.62f, 0.38f));
             var accent = Mat("Accent", new Color(0.98f, 0.55f, 0.45f));
-            var leaves = Mat("Leaves", new Color(0.30f, 0.62f, 0.35f));
 
+            // 房间 A 里的障碍物（房间外壳见 PlaygroundBuilder.Rooms.cs）
             var level = new GameObject("Level").transform;
 
-            // 悬空的岛：掉下去会回到出生点
-            Block("Ground", level, new Vector3(0f, -0.5f, 0f), new Vector3(30f, 1f, 30f), grass);
-            Block("GroundSkirt", level, new Vector3(0f, -1.6f, 0f), new Vector3(28f, 1.2f, 28f), dirt);
             Block("CenterPad", level, new Vector3(0f, 0.1f, 0f), new Vector3(4f, 0.2f, 4f), accent);
 
             // 箱子堆
@@ -256,10 +256,6 @@ namespace ScpParty.EditorTools
             Block("LowWall", level, new Vector3(0f, 0.5f, -8f), new Vector3(6f, 1f, 0.6f), stone);
             Pillar(level, new Vector3(8f, 0f, -5f), stone);
             Pillar(level, new Vector3(-3f, 0f, 9f), stone);
-
-            // 装饰树
-            foreach (var pos in new[] { new Vector3(11f, 0f, 11f), new Vector3(-11f, 0f, 10f), new Vector3(11.5f, 0f, -10f), new Vector3(-11f, 0f, -11f) })
-                Tree(level, pos, wood, leaves);
         }
 
         static Transform Block(string name, Transform parent, Vector3 position, Vector3 scale, Material mat, float yaw = 0f)
@@ -286,15 +282,6 @@ namespace ScpParty.EditorTools
             go.GetComponent<Renderer>().sharedMaterial = mat;
         }
 
-        static void Tree(Transform parent, Vector3 basePosition, Material trunkMat, Material leavesMat)
-        {
-            var tree = new GameObject("Tree").transform;
-            tree.SetParent(parent, false);
-            tree.localPosition = basePosition;
-            Block("Trunk", tree, new Vector3(0f, 0.9f, 0f), new Vector3(0.5f, 1.8f, 0.5f), trunkMat);
-            Block("Leaves", tree, new Vector3(0f, 2.4f, 0f), new Vector3(2f, 1.6f, 2f), leavesMat, 45f);
-            Block("LeavesTop", tree, new Vector3(0f, 3.5f, 0f), new Vector3(1.2f, 1f, 1.2f), leavesMat, 20f);
-        }
 
         static void BuildSpawnPoints()
         {

@@ -1,4 +1,5 @@
 using ScpParty.Combat;
+using ScpParty.Interaction;
 using ScpParty.Player;
 using Unity.Netcode;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace ScpParty.Weapons
         public WeaponPickup LookedAtPickup { get; private set; }
 
         PlayerController player;
+        PlayerInteractor interactor;
         InputAction attackAction, interactAction, dropAction, reloadAction;
         GameObject heldModel;
         Transform muzzle;
@@ -50,6 +52,7 @@ namespace ScpParty.Weapons
         void Awake()
         {
             player = GetComponent<PlayerController>();
+            interactor = GetComponent<PlayerInteractor>();
             anchorBasePosition = weaponAnchor.localPosition;
             anchorBaseRotation = weaponAnchor.localRotation;
         }
@@ -98,7 +101,9 @@ namespace ScpParty.Weapons
             if (!IsOwner || !IsSpawned)
                 return;
 
-            LookedAtPickup = player.CanAct ? WeaponPickup.FindBest(player.Head.position, player.Head.forward, pickupRange) : null;
+            // 看着门等可交互物时，E 交给 PlayerInteractor
+            bool interactorBusy = interactor != null && interactor.Target != null;
+            LookedAtPickup = player.CanAct && !interactorBusy ? WeaponPickup.FindBest(player.Head.position, player.Head.forward, pickupRange) : null;
             if (!player.CanAct)
                 return;
 
