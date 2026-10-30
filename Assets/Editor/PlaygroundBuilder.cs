@@ -49,6 +49,7 @@ namespace ScpParty.EditorTools
             BuildScene(player, combat, door);
             RegisterNetworkPrefabs(player, combat.Pickup.gameObject, combat.Dummy.gameObject, door.gameObject);
             InstallEnemy();
+            FurnishRooms();
             SetBuildScenes();
             AssetDatabase.SaveAssets();
             Debug.Log("[PlaygroundBuilder] 完成：" + ScenePath);

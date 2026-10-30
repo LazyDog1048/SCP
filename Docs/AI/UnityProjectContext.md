@@ -42,3 +42,8 @@
 - StationaryEnemy.prefab：NetworkObject + Health（100 血）+ CapsuleCollider + StationaryEnemy（受击/死亡表现），使用 Big_Cactoro 与 StationaryEnemy.controller。
 - 房间 B 的 EnemyPoints 由 ServerSpawner 生成一只怪物；网络 prefab 已登记。菜单 SCP/添加静止怪物到 Playground 可更新，BuildAll 也保留该接入。
 - CombatSelfTest 新增真实手枪打伤/击杀、死亡关闭碰撞、忽略追加伤害、保持死亡与位置的检查。
+
+## 2026-10-30 家具场景
+- KenneyFurniture：29 种 FBX 与原 CC0 许可；Assets/Prefabs/Furniture 存家具视觉 prefab 和共享 URP 调色材质，场景实例按用途配置尺寸/盒碰撞。
+- Playground A：沙发茶几休息区、双装备桌（原武器点保留）、书架/植物/储物柜；B：双电脑工位、柜台水槽/冰箱/咖啡机、书柜储物。原 Level 占位高台坡道方块已移除，怪物点和门仍保留。
+- SCP/用 Kenney 家具重搭房间：更新布局；BuildFurnitureTest：布局+预览+Windows 构建；预览位于 Logs/FurnitureRoomA.png、FurnitureRoomB.png。

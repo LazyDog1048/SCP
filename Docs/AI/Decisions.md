@@ -77,3 +77,9 @@
 - 实现参数（可后续调整）：先选 Big_Cactoro，100 血，放房间 B (3,0.05,19)，不追逐、不攻击、不自动复活；死亡保留尸体并关闭命中碰撞。
 - 技术：复用服务器 Health，受击 Rpc 驱动 HitReact，IsDead 同步驱动死亡 Animator 与碰撞；晚加入客户端按当前死亡状态初始化。不增加 NetworkTransform，不允许客户端结算伤害。
 - 生成器定点修改现有场景，追加生成组与网络 prefab，BuildAll 同步调用 InstallEnemy；保留场景其余布局。
+
+## 2026-10-30：用家具模型重搭房间
+- 已确认：用户要求用下载的 Kenney 家具模型重新搭建场景。
+- 陈设方案（实现选择）：A 房休息区/装备台/训练区，B 房电脑工位/柜台/储物；使用 29 种原包 FBX、保留 CC0，转换为 URP 材质，场景用独立家具 prefab 实例与简单盒碰撞。
+- 保留双房间壳体、联网门、武器生成点、木桩和怪物；移除旧 Level 的高台/坡道/方块障碍与旧道具实例、旧训练垫，未更改网络规则。墙与地板为结构几何，家具使用新模型。
+- PlaygroundBuilder.Furniture 的 RebuildFurniture 定点重搭陈设并保存；BuildAll 最后调用 FurnishRooms，避免旧生成器恢复占位陈设。原家具源文件与生成 prefab 分别放 ThirdParty/KenneyFurniture、Prefabs/Furniture。
