@@ -152,3 +152,9 @@
 - 未验证：真人有画面走动/家具碰撞手感、两台电脑局域网；玩家跑步动画的旧待查项仍存在。
 - 最终验证：FurnitureHost.log 原有与怪物测试 ALL PASSED，FurnitureClient.log 同步怪物死亡/关闭碰撞。未改动网络玩法代码。git diff --check 仅报告 Unity 自动序列化的两处空 m_Name 行尾空白，保留引擎输出；其余无空白错误。
 - 完成与下一步：重新打开 Playground 可看到新家具布局，或运行 Builds/Windows/SCP.exe；请真人走一遍休息区、装备台、门口和 B 房测试家具碰撞。场景预览/日志/构建不进 Git，已有 UnityConnectSettings 修改不提交。
+
+## 合并主分支（2026-10-30 / Codex / main）
+- 用户要求：将 codex/download-model-assets 的工作合入 main，并在主分支提交。
+- 已执行：main 从 f899c17 快进至 dbdeadd，包含本分支六个提交（素材核验、角色接入、静止怪物、家具重搭及文档），无合并冲突。
+- 验证：快进合并保留已验证的代码与资源内容；本次仅更新交接记录，未重复运行 Unity 测试。原有 UnityConnectSettings.asset m_Enabled=1 未提交修改继续保留。
+- 远端：本次仅本地主分支合并，未推送 origin/main。
