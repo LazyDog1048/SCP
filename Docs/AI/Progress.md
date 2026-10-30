@@ -97,3 +97,9 @@
 - 2026-10-28 / Claude / main：Assets 扁平化（去掉 Assets/Game 一层），删除模板 Readme、TutorialInfo、SampleScene；生成器路径同步更新。验证：batchmode 导入与 Windows 构建成功，主机+客户端 -combatTest ALL PASSED，生成器在新路径运行成功（场景重生成的 ID 变动已丢弃，保留移动后的原场景）。
 - 2026-10-28 / Claude / main：场地改为室内房间 A/B，新增可交互的联网门与工作台等道具，详见“房间与门”。
 - 2026-10-28 / Claude / main：用 Tripo 网页版生成探险小人，导入为 Assets/Models/Explorer（静态、未绑骨、未替换玩家外观），详见“角色模型：探险小人”。
+
+## 素材下载（2026-10-30 / Codex）
+- 范围：按用户要求下载免费 lowpoly 模型，优先 Kenney Furniture Kit；保存来源与许可，暂不导入或修改场景。
+- 状态：进行中。
+- 实际结果：官网已核实 Furniture Kit（140 项、CC0），但下载端返回 HTTP 403，未获得有效模型包；未导入资源、未运行 Unity 测试。
+- 下一步：通过浏览器手动下载 https://kenney.nl/assets/furniture-kit 后再导入；本次未完成素材下载。
