@@ -2,7 +2,7 @@
 
 ## 当前交接（2026-10-30）
 
-- 最新任务：导入角色素材并接入 Kenney 玩家外观及 Idle/Run；51 个视觉 prefab 位于 Assets/Models/Characters。具体变更和验证见末尾角色导入记录；敌人行为待确认。
+- 最新任务：角色素材已导入；房间 B 已接入可受伤、死亡的静止怪物，并通过联机和晚加入同步验证。具体变更见末尾静止怪物记录；玩家跑步实际姿势仍待排查。
 
 ### 早期项目交接（2026-10-27）
 
@@ -132,3 +132,13 @@
 - 视觉限制：待机、材质、站立比例已确认；静态跑步采样预览尚未呈现明显不同于待机的姿势，不能把跑步实际播放效果标为通过，后续必须在 Play Mode 验证或继续排查曲线。控制器与位移切换逻辑已接入。
 - 预览：Logs/CharacterPreview.png；Windows 测试包 Builds/Windows/SCP.exe。日志、构建、原始 ZIP 不提交。已有 UnityConnectSettings 修改保留、不纳入提交。
 - 下一步：打开 Playground 创建主机、用第二实例观察玩家移动动画，确认跑步曲线表现后再补跳跃/攻击与皮肤区分；用户确认敌人行为后接怪物逻辑。
+
+## 静止怪物（2026-10-30 / Codex）
+- 用户已确认：第一版敌人为会受伤、死亡的静止怪物。范围：复用 Health 和武器命中，制作网络怪物 prefab、房间 B 放置生成点、同步受击/死亡表现，验证主机客户端；不做追逐攻击或自动复活。
+- 状态：进行中。
+- 已完成：StationaryEnemy.cs 复用 Health 与网络同步，制作 StationaryEnemy.prefab 和 Idle/Hit/Death 控制器；房间 B (3,0.05,19) 服务器生成一只 Big_Cactoro，100 血、受击反应、死亡保留尸体并禁用碰撞。
+- 生成：PlaygroundBuilder.Enemies.cs 定点更新场景与生成组，网络 prefab 已登记，主生成器同步接入；未重建整个房间。
+- 验证：Unity SetupEnemy/Windows 构建成功退出 0；EnemyHost.log 原有测试与新增六项怪物测试 ALL PASSED；EnemyClient.log 收到 death applied server=False collider=False；EnemyLateClient.log 晚加入看到 health=0 dead=True、碰撞关闭。EnemyDeathPreview.png 已视觉核对死亡姿势正常。git diff --check 通过。
+- 未验证：真人手动四把武器打怪及有画面的联机表现、两台电脑局域网；玩家跑步动画的既有待查项仍未解决。
+- 下一步：打开 Playground 建主机，穿门进入 B 测试怪物；重开主机会重新生成满血怪物。可在 Health 调 maxHealth，生成器也需同步调整。已有 UnityConnectSettings 修改不提交。
+- 状态：静止怪物需求已实现并通过上述自动验证。

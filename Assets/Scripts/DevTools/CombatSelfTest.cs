@@ -105,6 +105,7 @@ namespace ScpParty.DevTools
             }
 
             yield return DoorTest(controller, me.GetComponent<PlayerInteractor>());
+            yield return EnemyTest(controller, weapons);
 
             Log(failures == 0 ? "ALL PASSED" : $"FAILED ({failures})");
         }
@@ -136,6 +137,33 @@ namespace ScpParty.DevTools
             Check(interactor.ServerTryInteract(door) && !door.IsOpen.Value, "player closed door from room B");
             yield return new WaitForSeconds(1.2f);
             Check(Blocked(), "closed door blocks doorway again");
+        }
+
+        IEnumerator EnemyTest(PlayerController controller, PlayerWeapons weapons)
+        {
+            var enemy = FindFirstObjectByType<StationaryEnemy>();
+            Check(enemy != null, "stationary enemy spawned");
+            if (enemy == null) yield break;
+            var health = enemy.GetComponent<Health>();
+            var position = enemy.transform.position;
+            controller.TeleportTo(position + Vector3.back * 4f, Quaternion.identity);
+            yield return new WaitForSeconds(.6f);
+            int pistol = Enumerable.Range(0, WeaponDatabase.Count).First(i => WeaponDatabase.Get(i).kind == WeaponKind.Hitscan);
+            int before = health.Current.Value;
+            for (int shot = 0; shot < 8 && !health.IsDead.Value; shot++)
+            {
+                weapons.ServerGive(pistol, 99);
+                var origin = controller.Head.position;
+                weapons.ServerAttack(origin, (position + Vector3.up - origin).normalized);
+                yield return new WaitForSeconds(.35f);
+                if (shot == 0) Check(health.Current.Value < before && !health.IsDead.Value, "enemy takes nonlethal weapon damage");
+            }
+            Check(health.IsDead.Value && health.Current.Value == 0, "enemy dies from weapon damage");
+            Check(!enemy.GetComponent<Collider>().enabled, "dead enemy collider disabled");
+            health.ApplyDamage(new DamageInfo { Amount = 10, Point = position });
+            Check(health.Current.Value == 0, "dead enemy ignores more damage");
+            yield return new WaitForSeconds(3f);
+            Check(health.IsDead.Value && enemy.transform.position == position, "enemy stays dead and stationary");
         }
 
         void Check(bool ok, string what)

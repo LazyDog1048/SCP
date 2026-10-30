@@ -71,3 +71,9 @@
 - Generic 动画源文件省略模型容器，生成 .anim 时将路径加 Root/ 前缀，保留骨架原始轨道，避免覆盖模型容器姿势和比例。原始文件不改。
 - 怪物按 Big/Blob/Flying 前缀保存 50 个视觉 prefab，统一 1.8 米作为预览起点；尚无敌人 AI、碰撞、伤害或生成接入，具体行为待用户确认。Universal Animation Library 暂作导入备用，未接重定向。
 - 素材与 CC0 原许可放 Assets/ThirdParty，生成器为 CharacterAssetSetup；怪物许可文本标题与包名不一致的原文保留。
+
+## 2026-10-30：静止怪物第一版
+- 已确认需求：用户选择会受伤、死亡的静止怪物。
+- 实现参数（可后续调整）：先选 Big_Cactoro，100 血，放房间 B (3,0.05,19)，不追逐、不攻击、不自动复活；死亡保留尸体并关闭命中碰撞。
+- 技术：复用服务器 Health，受击 Rpc 驱动 HitReact，IsDead 同步驱动死亡 Animator 与碰撞；晚加入客户端按当前死亡状态初始化。不增加 NetworkTransform，不允许客户端结算伤害。
+- 生成器定点修改现有场景，追加生成组与网络 prefab，BuildAll 同步调用 InstallEnemy；保留场景其余布局。

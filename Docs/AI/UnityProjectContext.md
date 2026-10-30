@@ -37,3 +37,8 @@
 - Assets/Models/Characters：玩家视觉、50 个分类前缀怪物 prefab、URP 材质、Idle/Run Animator Controller 与映射后的 .anim。
 - Player.prefab 已接 Kenney 外观；PlayerVisuals 使用水平位移驱动 Idle/Run，仍保留自身隐藏/倒地。跳跃素材已导入但未接 Animator；暂无攻击动画。
 - 菜单 SCP/模型/导入玩家与怪物 可重复设置；PlaygroundBuilder 重建玩家后调用 ApplyPlayerVisual 保持外观。原场景不重建。
+
+## 2026-10-30 静止怪物
+- StationaryEnemy.prefab：NetworkObject + Health（100 血）+ CapsuleCollider + StationaryEnemy（受击/死亡表现），使用 Big_Cactoro 与 StationaryEnemy.controller。
+- 房间 B 的 EnemyPoints 由 ServerSpawner 生成一只怪物；网络 prefab 已登记。菜单 SCP/添加静止怪物到 Playground 可更新，BuildAll 也保留该接入。
+- CombatSelfTest 新增真实手枪打伤/击杀、死亡关闭碰撞、忽略追加伤害、保持死亡与位置的检查。

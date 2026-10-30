@@ -1157,6 +1157,8 @@ MonoBehaviour:
     points: {fileID: 776921617}
   - prefab: {fileID: 3556043402684501275, guid: 84ca76d00bd9c6f4b994aeb5cf376628, type: 3}
     points: {fileID: 1243045362}
+  - prefab: {fileID: 1915465940567124488, guid: 9fac58d7dee132b469450f3eddb2d5b4, type: 3}
+    points: {fileID: 1732803688}
   pickupPrefab: {fileID: 8850738620178244730, guid: bb3ed18ea2a0e0746a8fd82cf732fd86, type: 3}
   weaponPoints: {fileID: 167575617}
 --- !u!4 &512942106
@@ -4416,6 +4418,38 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6083159179482065178, guid: 2a9e333215703ec4594675f4f799141c, type: 3}
   m_PrefabInstance: {fileID: 1690155075}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1732803687
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1732803688}
+  m_Layer: 0
+  m_Name: EnemyPoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1732803688
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1732803687}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1937598970}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1773323153
 GameObject:
   m_ObjectHideFlags: 0
@@ -4744,6 +4778,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6083159179482065178, guid: 2a9e333215703ec4594675f4f799141c, type: 3}
   m_PrefabInstance: {fileID: 1881554478}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1937598969
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1937598970}
+  m_Layer: 0
+  m_Name: StationaryMonster
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1937598970
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1937598969}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000004371139}
+  m_LocalPosition: {x: 3, y: 0.05, z: 19}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1732803688}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2013674983
 GameObject:
   m_ObjectHideFlags: 0
@@ -5237,3 +5302,4 @@ SceneRoots:
   - {fileID: 1030215549}
   - {fileID: 952417161}
   - {fileID: 512942106}
+  - {fileID: 1732803688}
