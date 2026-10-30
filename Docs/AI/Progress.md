@@ -110,3 +110,9 @@
 - 原始待选包目录已加入忽略规则，避免重复格式与预览图全部提交；正式选用资源后放入 Assets 独立第三方目录并保留许可和 meta。
 - 验证：ZIP 解压成功、检查许可和模型格式；未运行 Unity 导入、材质或场景验证。本次无代码修改。
 - 下一步：挑选家具后导入 FBX 与所需贴图，检查 URP 材质、比例及碰撞；不自动替换场景。
+
+## 角色素材下载核验（2026-10-30 / Codex）
+- 用户选择：玩家只选 Kenney Animated Characters Protagonists，跳过 Universal Base Characters；已下载敌人包和 Standard 动画库。
+- 已核验 D:\Download：玩家包含 4 个 FBX，Ultimate Monsters 含 50 个 FBX 和 50 个 Blend，Universal Animation Library Standard 含 2 个 FBX 和 2 个 GLB。
+- 验证：三个 ZIP 的所有非空条目均成功解压读取到空输出流，无读取异常；附带 License.txt 均标注 CC0。怪物包许可文件标题写 Ultimate Platformer Pack，与包名不一致，保留此原文差异。
+- 尚未导入 Unity，未验证骨骼、动画片段数、材质或运行效果；本次没有代码或资源修改。下一步按需选择 FBX 导入并验证。
