@@ -45,6 +45,7 @@ namespace ScpParty.EditorTools
             var combat = BuildCombatAssets();
             var door = BuildDoorPrefab();
             var player = BuildPlayerPrefab(combat.Pickup);
+            CharacterAssetSetup.ApplyPlayerVisual();
             BuildScene(player, combat, door);
             RegisterNetworkPrefabs(player, combat.Pickup.gameObject, combat.Dummy.gameObject, door.gameObject);
             SetBuildScenes();

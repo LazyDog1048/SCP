@@ -64,3 +64,10 @@
 - 交互采用通用 Interactable + PlayerInteractor：客户端射线选目标，服务器校验距离后执行；被墙挡住时不可交互。以后的开关、箱子等继承 Interactable 即可。E 优先交给可交互物，其次才是拾取武器。
 - 门是服务器生成的网络物体（与木桩一样由 ServerSpawner 生成），不使用场景内放置的 NetworkObject，避免 batchmode 生成场景时的哈希问题。
 - 道具是普通（非联网）静态 prefab，放在 Prefabs/Props，可以在编辑器里自由摆放；注意重新运行生成器会重建整个 Playground 场景。
+
+## 2026-10-30：角色素材接入
+- 已确认：用户选择 Kenney 玩家包，跳过 Universal Base Characters，并授权导入玩家、怪物、Standard 动画库开始制作。
+- 实现取舍：玩家先用 skaterMaleA 皮肤与原包 Idle/Run，保持第一人称相机、碰撞和网络权威；通过同步后的水平位移驱动表现，不增加网络消息。暂不对贴图整身染色，当前玩家外观相同，后续可接四套皮肤。
+- Generic 动画源文件省略模型容器，生成 .anim 时将路径加 Root/ 前缀，保留骨架原始轨道，避免覆盖模型容器姿势和比例。原始文件不改。
+- 怪物按 Big/Blob/Flying 前缀保存 50 个视觉 prefab，统一 1.8 米作为预览起点；尚无敌人 AI、碰撞、伤害或生成接入，具体行为待用户确认。Universal Animation Library 暂作导入备用，未接重定向。
+- 素材与 CC0 原许可放 Assets/ThirdParty，生成器为 CharacterAssetSetup；怪物许可文本标题与包名不一致的原文保留。

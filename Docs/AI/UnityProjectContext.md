@@ -31,3 +31,9 @@
 
 <!-- unity-onboarding:generated:end -->
 - 已知警告：日志中 “Missing types referenced from component UniversalRenderPipelineGlobalSettings … PathTracing” 来自 6000.4 保存的 URP 全局设置，6000.3 无此类型，不影响运行。
+
+## 2026-10-30 角色素材更新
+- Assets/ThirdParty：KenneyProtagonists（模型、4 皮肤、Idle/Run/Jump 源动画）、QuaterniusMonsters（50 模型与 atlas）、UniversalAnimations（Unity Standard 与 RM 两个 FBX）。附 CC0 许可。
+- Assets/Models/Characters：玩家视觉、50 个分类前缀怪物 prefab、URP 材质、Idle/Run Animator Controller 与映射后的 .anim。
+- Player.prefab 已接 Kenney 外观；PlayerVisuals 使用水平位移驱动 Idle/Run，仍保留自身隐藏/倒地。跳跃素材已导入但未接 Animator；暂无攻击动画。
+- 菜单 SCP/模型/导入玩家与怪物 可重复设置；PlaygroundBuilder 重建玩家后调用 ApplyPlayerVisual 保持外观。原场景不重建。

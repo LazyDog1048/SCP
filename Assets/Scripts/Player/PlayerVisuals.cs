@@ -12,6 +12,7 @@ namespace ScpParty.Player
     {
         [SerializeField] Transform body;
         [SerializeField] Renderer[] tintedRenderers;
+        [SerializeField] Animator animator;
         [SerializeField] float knockdownAngle = -80f;
         [SerializeField] float fallSpeed = 400f;
         [SerializeField] float getUpSpeed = 160f;
@@ -32,12 +33,15 @@ namespace ScpParty.Player
 
         PlayerController player;
         float tilt;
+        Vector3 previousPosition;
+        static readonly int MovingId = Animator.StringToHash("Moving");
 
         public static Color ColorFor(ulong clientId) => Palette[(int)(clientId % (ulong)Palette.Length)];
 
         void Awake()
         {
             player = GetComponent<PlayerController>();
+            previousPosition = transform.position;
         }
 
         public override void OnNetworkSpawn()
@@ -56,7 +60,13 @@ namespace ScpParty.Player
 
         void LateUpdate()
         {
+            if (!IsSpawned) return;
             bool down = player.IsDown;
+            var delta = transform.position - previousPosition;
+            previousPosition = transform.position;
+            delta.y = 0f;
+            if (animator != null)
+                animator.SetBool(MovingId, !down && delta.magnitude > Time.deltaTime * .2f);
             float target = down ? knockdownAngle : 0f;
             tilt = Mathf.MoveTowards(tilt, target, (down ? fallSpeed : getUpSpeed) * Time.deltaTime);
             body.localRotation = Quaternion.Euler(tilt, 0f, 0f);

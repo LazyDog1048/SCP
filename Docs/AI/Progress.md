@@ -1,6 +1,10 @@
 # 进度与交接
 
-## 当前交接（2026-10-27）
+## 当前交接（2026-10-30）
+
+- 最新任务：导入角色素材并接入 Kenney 玩家外观及 Idle/Run；51 个视觉 prefab 位于 Assets/Models/Characters。具体变更和验证见末尾角色导入记录；敌人行为待确认。
+
+### 早期项目交接（2026-10-27）
 
 - 用户目标：将项目上传到自己的 Git，并允许另一位成员与其 AI 从共享上下文继续开发。
 - 用户已创建 GitHub 仓库：https://github.com/LazyDog1048/SCP 。远端 origin 已配置，main 跟踪 origin/main。
@@ -116,3 +120,15 @@
 - 已核验 D:\Download：玩家包含 4 个 FBX，Ultimate Monsters 含 50 个 FBX 和 50 个 Blend，Universal Animation Library Standard 含 2 个 FBX 和 2 个 GLB。
 - 验证：三个 ZIP 的所有非空条目均成功解压读取到空输出流，无读取异常；附带 License.txt 均标注 CC0。怪物包许可文件标题写 Ultimate Platformer Pack，与包名不一致，保留此原文差异。
 - 尚未导入 Unity，未验证骨骼、动画片段数、材质或运行效果；本次没有代码或资源修改。下一步按需选择 FBX 导入并验证。
+
+## 角色导入与玩家外观（2026-10-30 / Codex）
+- 用户授权：导入已下载素材并开始制作。范围：导入 FBX/必要贴图/许可，生成 URP 模型 prefab，接入 Kenney 玩家外观及基础动画；怪物仅模型 prefab，行为待确认；不重建场景、不改联机和碰撞规则。
+- 状态：进行中。
+- 已完成：三套角色素材导入 Assets/ThirdParty 并保留 CC0 许可；Assets/Models/Characters 生成 51 个视觉 prefab、URP 材质和待机/跑步控制器，Player.prefab 替换外观，PlayerVisuals 按水平位移切换动画；生成器同步保持接入。
+- 修复：正式动画片段排除 __preview__；原包动画比模型少容器层，生成副本映射到 Root 骨架，解决缩放/躺倒/T 姿势。预览确认站立、皮肤、大小与待机姿势。
+- 尚未完成：敌人 AI/生成/受伤死亡接入，跳跃/攻击动画，按玩家区分皮肤，Universal 动画重定向；家具本次未导入。敌人具体行为已询问，尚未收到回复。
+- 验证：Unity 6000.3.27f1 batchmode Setup 完成退出 0；初版 Windows 构建成功且主机+客户端 CombatSelfTest ALL PASSED；最终动画修正后再次构建中。未实测真人输入与两台电脑局域网；素材预览不等于完整动画手感验证。
+- 最终验证：动画重映射后的 Windows 构建 Succeeded（CharacterBuild.log，退出 0）；最终主机与客户端 CharacterHostFinal/CharacterClientFinal 回归 ALL PASSED，未发现运行异常。所有新增资源 .meta 完整；git diff --check 无空白错误。
+- 视觉限制：待机、材质、站立比例已确认；静态跑步采样预览尚未呈现明显不同于待机的姿势，不能把跑步实际播放效果标为通过，后续必须在 Play Mode 验证或继续排查曲线。控制器与位移切换逻辑已接入。
+- 预览：Logs/CharacterPreview.png；Windows 测试包 Builds/Windows/SCP.exe。日志、构建、原始 ZIP 不提交。已有 UnityConnectSettings 修改保留、不纳入提交。
+- 下一步：打开 Playground 创建主机、用第二实例观察玩家移动动画，确认跑步曲线表现后再补跳跃/攻击与皮肤区分；用户确认敌人行为后接怪物逻辑。
