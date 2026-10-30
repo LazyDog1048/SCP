@@ -69,3 +69,6 @@ Thumbs.db
 *.jks
 /.codex/
 /.claude/
+
+# Local source asset downloads (curated imports belong in Assets/)
+/Downloads/ModelAssets/

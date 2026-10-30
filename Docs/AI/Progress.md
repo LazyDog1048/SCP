@@ -103,3 +103,10 @@
 - 状态：进行中。
 - 实际结果：官网已核实 Furniture Kit（140 项、CC0），但下载端返回 HTTP 403，未获得有效模型包；未导入资源、未运行 Unity 测试。
 - 下一步：通过浏览器手动下载 https://kenney.nl/assets/furniture-kit 后再导入；本次未完成素材下载。
+
+## 本地素材整理（2026-10-30 / Codex / codex/download-model-assets）
+- 用户已下载 D:\Download\kenney_furniture-kit.zip；范围为检查并解压待选素材，保留许可，暂不导入 Unity。
+- 已完成：解压到 Downloads/ModelAssets/FurnitureKit，共 1546 个文件；含 FBX、OBJ、DAE、GLTF、STL 格式和预览图。License.txt 确认 Furniture Kit 2.0 为 CC0，可商用，无强制署名。
+- 原始待选包目录已加入忽略规则，避免重复格式与预览图全部提交；正式选用资源后放入 Assets 独立第三方目录并保留许可和 meta。
+- 验证：ZIP 解压成功、检查许可和模型格式；未运行 Unity 导入、材质或场景验证。本次无代码修改。
+- 下一步：挑选家具后导入 FBX 与所需贴图，检查 URP 材质、比例及碰撞；不自动替换场景。
